@@ -1,0 +1,304 @@
+// ===========================================
+// Alpha-Drivers Database Schema
+// PostgreSQL via Supabase
+// ===========================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  CLIENT
+  DRIVER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum City {
+  DOUALA
+  YAOUNDE
+  LIMBE
+  BUEA
+}
+
+enum DriverStatus {
+  PENDING_PAYMENT
+  PENDING_VERIFICATION
+  VERIFIED
+  SUSPENDED
+  REJECTED
+}
+
+enum DocumentType {
+  CNI_FRONT
+  CNI_BACK
+  DRIVING_LICENSE_FRONT
+  DRIVING_LICENSE_BACK
+  PROFILE_PHOTO
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BookingStatus {
+  PENDING
+  PAID
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  RELEASED
+  DISPUTED
+  CANCELLED
+  REFUNDED
+}
+
+enum TransactionType {
+  ESCROW_DEPOSIT
+  DRIVER_PAYOUT
+  PLATFORM_FEE
+  REFUND
+  REGISTRATION_FEE
+}
+
+enum TransactionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ============================================
+// USER & AUTH
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  phone         String    @unique
+  passwordHash  String    @map("password_hash")
+  role          UserRole  @default(CLIENT)
+  firstName     String?   @map("first_name")
+  lastName      String?   @map("last_name")
+  avatarUrl     String?   @map("avatar_url")
+  city          City?
+  isVerified    Boolean   @default(false) @map("is_verified")
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  driver           Driver?
+  clientBookings   Booking[]     @relation("ClientBookings")
+  sentMessages     Message[]     @relation("SentMessages")
+  reviewsGiven     Review[]      @relation("ReviewsGiven")
+  reviewsReceived  Review[]      @relation("ReviewsReceived")
+  paidTransactions Transaction[] @relation("PayerTransactions")
+  receivedTransactions Transaction[] @relation("PayeeTransactions")
+
+  @@map("users")
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([phone, code])
+  @@map("otp_codes")
+}
+
+// ============================================
+// DRIVER
+// ============================================
+
+model Driver {
+  id                String       @id @default(cuid())
+  userId            String       @unique @map("user_id")
+  hourlyRate        Int          @map("hourly_rate")
+  bio               String?      @db.Text
+  experienceYears   Int?         @map("experience_years")
+  languages         String[]
+  cities            City[]
+  status            DriverStatus @default(PENDING_PAYMENT)
+  avgRating         Decimal      @default(0) @map("avg_rating") @db.Decimal(3, 2)
+  totalTrips        Int          @default(0) @map("total_trips")
+  totalEarnings     Int          @default(0) @map("total_earnings")
+  registrationPaid  Boolean      @default(false) @map("registration_paid")
+  registrationPaidAt DateTime?   @map("registration_paid_at")
+  verifiedAt        DateTime?    @map("verified_at")
+  verifiedBy        String?      @map("verified_by")
+  rejectionReason   String?      @map("rejection_reason")
+  momoNumber        String?      @map("momo_number")
+  momoProvider      String?      @map("momo_provider")
+  slug              String?      @unique
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents Document[]
+  bookings  Booking[]
+
+  @@map("drivers")
+}
+
+model Document {
+  id              String         @id @default(cuid())
+  driverId        String         @map("driver_id")
+  type            DocumentType
+  fileUrl         String         @map("file_url")
+  originalName    String?        @map("original_name")
+  status          DocumentStatus @default(PENDING)
+  reviewedBy      String?        @map("reviewed_by")
+  reviewedAt      DateTime?      @map("reviewed_at")
+  rejectionReason String?        @map("rejection_reason")
+  uploadedAt      DateTime       @default(now()) @map("uploaded_at")
+
+  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@unique([driverId, type])
+  @@map("documents")
+}
+
+// ============================================
+// BOOKING & PAYMENTS
+// ============================================
+
+model Booking {
+  id              String        @id @default(cuid())
+  clientId        String        @map("client_id")
+  driverId        String        @map("driver_id")
+  startDate       DateTime      @map("start_date")
+  endDate         DateTime      @map("end_date")
+  hoursBooked     Int           @map("hours_booked")
+  pickupLocation  String        @map("pickup_location")
+  pickupCity      City          @map("pickup_city")
+  dropoffLocation String?       @map("dropoff_location")
+  status          BookingStatus @default(PENDING)
+  driverFee       Int           @map("driver_fee")
+  platformFee     Int           @map("platform_fee")
+  totalAmount     Int           @map("total_amount")
+  specialRequests String?       @map("special_requests") @db.Text
+  disputeReason   String?       @map("dispute_reason") @db.Text
+  disputedAt      DateTime?     @map("disputed_at")
+  confirmedAt     DateTime?     @map("confirmed_at")
+  startedAt       DateTime?     @map("started_at")
+  completedAt     DateTime?     @map("completed_at")
+  releasedAt      DateTime?     @map("released_at")
+  cancelledAt     DateTime?     @map("cancelled_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  client       User          @relation("ClientBookings", fields: [clientId], references: [id])
+  driver       Driver        @relation(fields: [driverId], references: [id])
+  transactions Transaction[]
+  messages     Message[]
+  reviews      Review[]
+
+  @@index([clientId])
+  @@index([driverId])
+  @@index([status])
+  @@map("bookings")
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  bookingId     String?           @map("booking_id")
+  type          TransactionType
+  amount        Int
+  currency      String            @default("XAF")
+  status        TransactionStatus @default(PENDING)
+  provider      String?
+  providerRef   String?           @map("provider_ref")
+  momoNumber    String?           @map("momo_number")
+  payerId       String?           @map("payer_id")
+  payeeId       String?           @map("payee_id")
+  description   String?
+  metadata      Json?
+  failureReason String?           @map("failure_reason")
+  processedAt   DateTime?         @map("processed_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+
+  booking Booking? @relation(fields: [bookingId], references: [id])
+  payer   User?    @relation("PayerTransactions", fields: [payerId], references: [id])
+  payee   User?    @relation("PayeeTransactions", fields: [payeeId], references: [id])
+
+  @@index([bookingId])
+  @@index([providerRef])
+  @@map("transactions")
+}
+
+// ============================================
+// MESSAGING & REVIEWS
+// ============================================
+
+model Message {
+  id        String    @id @default(cuid())
+  bookingId String    @map("booking_id")
+  senderId  String    @map("sender_id")
+  content   String    @db.Text
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  sender  User    @relation("SentMessages", fields: [senderId], references: [id])
+
+  @@index([bookingId])
+  @@map("messages")
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  bookingId  String   @map("booking_id")
+  reviewerId String   @map("reviewer_id")
+  revieweeId String   @map("reviewee_id")
+  rating     Int
+  comment    String?  @db.Text
+  isPublic   Boolean  @default(true) @map("is_public")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  booking  Booking @relation(fields: [bookingId], references: [id])
+  reviewer User    @relation("ReviewsGiven", fields: [reviewerId], references: [id])
+  reviewee User    @relation("ReviewsReceived", fields: [revieweeId], references: [id])
+
+  @@unique([bookingId, reviewerId])
+  @@map("reviews")
+}
+
+// ============================================
+// SEO CONTENT
+// ============================================
+
+model CityPage {
+  id            String  @id @default(cuid())
+  city          City    @unique
+  slug          String  @unique
+  titleFr       String  @map("title_fr")
+  titleEn       String  @map("title_en")
+  descriptionFr String  @map("description_fr") @db.Text
+  descriptionEn String  @map("description_en") @db.Text
+  metaDescFr    String  @map("meta_desc_fr")
+  metaDescEn    String  @map("meta_desc_en")
+  heroImageUrl  String? @map("hero_image_url")
+  latitude      Decimal @db.Decimal(10, 8)
+  longitude     Decimal @db.Decimal(11, 8)
+  driverCount   Int     @default(0) @map("driver_count")
+  avgPrice      Int?    @map("avg_price")
+  isActive      Boolean @default(true) @map("is_active")
+
+  @@map("city_pages")
+}
