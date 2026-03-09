@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import localFont from "next/font/local";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
 import { NavigationProgress } from "@/components/ui/navigation-progress";
@@ -73,15 +74,35 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <head>
+        <Script id="fix-dom-hydration" strategy="beforeInteractive">{`
+          if (typeof Node !== 'undefined') {
+            var origRemoveChild = Node.prototype.removeChild;
+            Node.prototype.removeChild = function(child) {
+              if (child.parentNode !== this) {
+                return child;
+              }
+              return origRemoveChild.apply(this, arguments);
+            };
+            var origInsertBefore = Node.prototype.insertBefore;
+            Node.prototype.insertBefore = function(newNode, refNode) {
+              if (refNode && refNode.parentNode !== this) {
+                return newNode;
+              }
+              return origInsertBefore.apply(this, arguments);
+            };
+          }
+        `}</Script>
+      </head>
       <body className="min-h-screen bg-white font-sans antialiased" suppressHydrationWarning>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-primary-600 focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
-        >
-          Aller au contenu principal
-        </a>
         <AuthSessionProvider>
           <LanguageProvider initialLocale={locale}>
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-primary-600 focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
+            >
+              Aller au contenu principal
+            </a>
             <NavigationProgress />
             {children}
           </LanguageProvider>
