@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       : undefined;
     const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
+    const limit = Math.min(parseInt(searchParams.get("limit") || "10"), 50);
     const sortBy = searchParams.get("sortBy") || "avgRating";
     const sortOrder = searchParams.get("sortOrder") || "desc";
 
@@ -96,7 +96,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching drivers:", error);
     return NextResponse.json(
       { error: "Une erreur est survenue lors du chargement des chauffeurs" },
       { status: 500 }

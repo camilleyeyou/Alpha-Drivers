@@ -4,6 +4,20 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/db/prisma";
 import { loginSchema } from "@/lib/validators";
 
+interface AuthUser {
+  id: string;
+  email: string | null;
+  name: string | null;
+  phone: string;
+  role: string;
+  firstName: string | null;
+  lastName: string | null;
+  city: string | null;
+  isVerified: boolean;
+  driverId: string | null;
+  driverStatus: string | null;
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   providers: [
@@ -41,14 +55,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           isVerified: user.isVerified,
           driverId: user.driver?.id ?? null,
           driverStatus: user.driver?.status ?? null,
-        };
+        } as AuthUser;
       },
     }),
   ],
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
 
   pages: {
@@ -58,20 +72,54 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id!;
-        token.phone = (user as any).phone;
-        token.role = (user as any).role;
-        token.firstName = (user as any).firstName;
-        token.lastName = (user as any).lastName;
-        token.city = (user as any).city;
-        token.isVerified = (user as any).isVerified;
-        token.driverId = (user as any).driverId;
-        token.driverStatus = (user as any).driverStatus;
+        const u = user as AuthUser;
+        token.id = u.id;
+        token.phone = u.phone;
+        token.role = u.role;
+        token.firstName = u.firstName;
+        token.lastName = u.lastName;
+        token.city = u.city;
+        token.isVerified = u.isVerified;
+        token.driverId = u.driverId;
+        token.driverStatus = u.driverStatus;
+        token.lastValidated = Date.now();
       }
+
+      // Re-validate critical fields from DB every 5 minutes
+      const lastValidated = (token.lastValidated as number) || 0;
+      if (Date.now() - lastValidated > 5 * 60 * 1000) {
+        try {
+          const freshUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            include: { driver: { select: { id: true, status: true } } },
+          });
+
+          if (!freshUser || !freshUser.isActive) {
+            // User deactivated — clear id to invalidate
+            token.id = "";
+            return token;
+          }
+
+          token.role = freshUser.role;
+          token.isVerified = freshUser.isVerified;
+          token.driverId = freshUser.driver?.id ?? null;
+          token.driverStatus = freshUser.driver?.status ?? null;
+          token.lastValidated = Date.now();
+        } catch {
+          // DB error — keep existing token data
+        }
+      }
+
       return token;
     },
 
     async session({ session, token }) {
+      if (!token.id) {
+        // Token was invalidated (user deactivated)
+        session.user = undefined as any;
+        return session;
+      }
+
       if (session.user) {
         session.user.id = token.id as string;
         session.user.phone = token.phone as string;

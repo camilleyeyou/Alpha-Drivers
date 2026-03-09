@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/db/prisma";
 import { driverRegisterSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, "register");
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
 
@@ -110,7 +114,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Driver registration error:", error);
     return NextResponse.json(
       { error: "Une erreur est survenue lors de l'inscription" },
       { status: 500 }

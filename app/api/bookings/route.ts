@@ -3,10 +3,14 @@ import { requireAuth } from "@/lib/auth-helpers";
 import { bookingSchema } from "@/lib/validators";
 import { calculateTotalAmount } from "@/lib/utils";
 import prisma from "@/lib/db/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   const { session, error } = await requireAuth();
   if (error) return error;
+
+  const rateLimited = await checkRateLimit(request, "api", session!.user.id);
+  if (rateLimited) return rateLimited;
 
   try {
     const body = await request.json();
@@ -59,49 +63,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for overlapping bookings for this driver
+    // Calculate fees
     const end = new Date(endDate);
-    const overlapping = await prisma.booking.findFirst({
-      where: {
-        driverId,
-        status: { in: ["PENDING", "PAID", "CONFIRMED", "IN_PROGRESS"] },
-        startDate: { lt: end },
-        endDate: { gt: start },
-      },
+    const driverFee = driver.hourlyRate * hoursBooked;
+    const { platformFee, totalAmount } = calculateTotalAmount(driverFee);
+
+    // Use DB transaction to prevent race conditions on overlap check + create
+    const booking = await prisma.$transaction(async (tx) => {
+      // Check for overlapping bookings inside the transaction
+      const overlapping = await tx.booking.findFirst({
+        where: {
+          driverId,
+          status: { in: ["PENDING", "PAID", "CONFIRMED", "IN_PROGRESS"] },
+          startDate: { lt: end },
+          endDate: { gt: start },
+        },
+      });
+
+      if (overlapping) {
+        throw new Error("OVERLAP");
+      }
+
+      return tx.booking.create({
+        data: {
+          clientId: session!.user.id,
+          driverId,
+          startDate: start,
+          endDate: end,
+          hoursBooked,
+          pickupLocation,
+          pickupCity: pickupCity as any,
+          dropoffLocation: dropoffLocation || null,
+          specialRequests: specialRequests || null,
+          driverFee,
+          platformFee,
+          totalAmount,
+          status: "PENDING",
+        },
+      });
     });
 
-    if (overlapping) {
+    return NextResponse.json({ success: true, booking }, { status: 201 });
+  } catch (err: any) {
+    if (err?.message === "OVERLAP") {
       return NextResponse.json(
         { error: "Ce chauffeur a déjà une réservation sur ce créneau." },
         { status: 400 }
       );
     }
-
-    // Calculate fees
-    const driverFee = driver.hourlyRate * hoursBooked;
-    const { platformFee, totalAmount } = calculateTotalAmount(driverFee);
-
-    const booking = await prisma.booking.create({
-      data: {
-        clientId: session!.user.id,
-        driverId,
-        startDate: start,
-        endDate: end,
-        hoursBooked,
-        pickupLocation,
-        pickupCity: pickupCity as any,
-        dropoffLocation: dropoffLocation || null,
-        specialRequests: specialRequests || null,
-        driverFee,
-        platformFee,
-        totalAmount,
-        status: "PENDING",
-      },
-    });
-
-    return NextResponse.json({ success: true, booking }, { status: 201 });
-  } catch (err: any) {
-    console.error("Booking creation error:", err);
     return NextResponse.json(
       { error: "Une erreur est survenue lors de la réservation." },
       { status: 500 }

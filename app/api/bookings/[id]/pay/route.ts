@@ -77,7 +77,6 @@ export async function POST(
       transaction: payment.transaction,
     });
   } catch (err: any) {
-    console.error("Payment initiation error:", err);
     return NextResponse.json(
       { error: err.message || "Erreur lors de l'initiation du paiement." },
       { status: 500 }

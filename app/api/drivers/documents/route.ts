@@ -100,7 +100,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, document });
   } catch (err: any) {
-    console.error("Document upload error:", err);
     return NextResponse.json(
       { error: "Erreur lors du téléversement." },
       { status: 500 }

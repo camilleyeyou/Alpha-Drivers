@@ -75,7 +75,6 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Profil mis à jour" });
   } catch (error) {
-    console.error("Profile update error:", error);
     return NextResponse.json(
       { error: "Une erreur est survenue" },
       { status: 500 }
@@ -122,7 +121,6 @@ export async function GET() {
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error("Profile fetch error:", error);
     return NextResponse.json({ error: "Une erreur est survenue" }, { status: 500 });
   }
 }

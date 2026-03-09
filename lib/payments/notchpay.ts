@@ -171,6 +171,6 @@ export function detectProvider(phone: string): "mtn" | "orange" | "unknown" {
  */
 export function generateReference(type: "booking" | "registration" | "payout"): string {
   const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 8);
+  const random = crypto.randomBytes(4).toString("hex");
   return `${type}_${timestamp}_${random}`.toUpperCase();
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth-helpers";
 import prisma from "@/lib/db/prisma";
-import { generateReference } from "@/lib/payments/notchpay";
+import { generateReference, createTransfer } from "@/lib/payments/notchpay";
 
 export async function POST(
   request: NextRequest,
@@ -15,6 +15,7 @@ export async function POST(
       where: { id: params.id },
       include: {
         driver: { select: { userId: true } },
+        client: { select: { phone: true } },
         transactions: { where: { type: "ESCROW_DEPOSIT", status: "COMPLETED" } },
       },
     });
@@ -36,20 +37,45 @@ export async function POST(
       return NextResponse.json({ error: "Cette réservation ne peut plus être annulée." }, { status: 400 });
     }
 
-    // If booking was paid, create a refund record
-    if (booking.status === "PAID" || booking.status === "CONFIRMED") {
-      const escrowDeposit = booking.transactions[0];
-      if (escrowDeposit) {
-        await prisma.transaction.create({
+    // If booking was paid, initiate actual refund via NotchPay
+    if ((booking.status === "PAID" || booking.status === "CONFIRMED") && booking.transactions[0]) {
+      const refundRef = generateReference("booking");
+
+      // Create refund transaction record
+      const refundTx = await prisma.transaction.create({
+        data: {
+          bookingId: booking.id,
+          type: "REFUND",
+          amount: booking.totalAmount,
+          currency: "XAF",
+          status: "PENDING",
+          providerRef: refundRef,
+          payeeId: booking.clientId,
+          momoNumber: booking.client.phone,
+          description: `Remboursement réservation #${booking.id.slice(-6)}`,
+        },
+      });
+
+      try {
+        // Execute the refund transfer to client's phone
+        const transfer = await createTransfer({
+          amount: booking.totalAmount,
+          recipient: booking.client.phone,
+          reference: refundRef,
+          description: `Alpha-Drivers remboursement #${booking.id.slice(-6)}`,
+        });
+
+        await prisma.transaction.update({
+          where: { id: refundTx.id },
+          data: { status: "PROCESSING", metadata: transfer as any },
+        });
+      } catch (refundErr) {
+        // Mark refund as failed but still cancel the booking
+        await prisma.transaction.update({
+          where: { id: refundTx.id },
           data: {
-            bookingId: booking.id,
-            type: "REFUND",
-            amount: booking.totalAmount,
-            currency: "XAF",
-            status: "PENDING",
-            providerRef: generateReference("booking"),
-            payeeId: booking.clientId,
-            description: `Remboursement réservation #${booking.id.slice(-6)}`,
+            status: "FAILED",
+            failureReason: refundErr instanceof Error ? refundErr.message : "Refund failed",
           },
         });
       }
@@ -65,7 +91,6 @@ export async function POST(
 
     return NextResponse.json({ success: true, booking: updated });
   } catch (err) {
-    console.error("Booking cancel error:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

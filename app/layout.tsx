@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import localFont from "next/font/local";
 import { AuthSessionProvider } from "@/components/providers/session-provider";
@@ -22,6 +22,12 @@ const outfit = localFont({
   weight: "100 900",
   fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: {

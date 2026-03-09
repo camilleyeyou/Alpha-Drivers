@@ -106,6 +106,7 @@ model User {
   reviewsReceived  Review[]      @relation("ReviewsReceived")
   paidTransactions Transaction[] @relation("PayerTransactions")
   receivedTransactions Transaction[] @relation("PayeeTransactions")
+  passwordResetTokens PasswordResetToken[]
 
   @@map("users")
 }
@@ -120,6 +121,19 @@ model OtpCode {
 
   @@index([phone, code])
   @@map("otp_codes")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }
 
 // ============================================
@@ -153,6 +167,7 @@ model Driver {
   documents Document[]
   bookings  Booking[]
 
+  @@index([status])
   @@map("drivers")
 }
 
@@ -238,7 +253,7 @@ model Transaction {
   payee   User?    @relation("PayeeTransactions", fields: [payeeId], references: [id])
 
   @@index([bookingId])
-  @@index([providerRef])
+  @@unique([providerRef])
   @@map("transactions")
 }
 
@@ -276,6 +291,7 @@ model Review {
   reviewee User    @relation("ReviewsReceived", fields: [revieweeId], references: [id])
 
   @@unique([bookingId, reviewerId])
+  @@index([revieweeId])
   @@map("reviews")
 }
 

@@ -89,7 +89,6 @@ export async function POST(
       reference: payoutRef,
     });
   } catch (err: any) {
-    console.error("Release funds error:", err);
     return NextResponse.json(
       { error: err.message || "Erreur lors du transfert." },
       { status: 500 }

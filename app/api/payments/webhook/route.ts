@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
     // Verify webhook signature
     const isValid = verifyWebhookSignature(body, signature);
     if (!isValid) {
-      console.error("Invalid webhook signature");
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 401 }
@@ -26,8 +25,6 @@ export async function POST(request: NextRequest) {
 
     const payload = JSON.parse(body);
     const { event, data } = payload;
-
-    console.log("Webhook received:", event, data.reference);
 
     // Handle different event types
     switch (event) {
@@ -43,13 +40,10 @@ export async function POST(request: NextRequest) {
       case "transfer.failed":
         await handleTransferFailed(data);
         break;
-      default:
-        console.log("Unhandled webhook event:", event);
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("Webhook error:", error);
     return NextResponse.json(
       { error: "Webhook processing failed" },
       { status: 500 }
@@ -57,115 +51,112 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handlePaymentComplete(data: any) {
-  const { reference, amount, currency, channel, customer } = data;
+async function handlePaymentComplete(data: Record<string, unknown>) {
+  const reference = data.reference as string;
 
-  // Find the transaction
+  // Idempotency: find transaction that is still PENDING
   const transaction = await prisma.transaction.findFirst({
-    where: { providerRef: reference },
+    where: { providerRef: reference, status: "PENDING" },
     include: { booking: true },
   });
 
   if (!transaction) {
-    console.error("Transaction not found for reference:", reference);
+    // Already processed or not found — skip silently
     return;
   }
 
-  // Update transaction status
-  await prisma.transaction.update({
-    where: { id: transaction.id },
-    data: {
-      status: "COMPLETED",
-      provider: channel,
-      processedAt: new Date(),
-      metadata: data,
-    },
-  });
-
-  // Handle based on transaction type
-  if (transaction.type === "ESCROW_DEPOSIT" && transaction.booking) {
-    // Update booking status to PAID
-    await prisma.booking.update({
-      where: { id: transaction.bookingId! },
-      data: { status: "PAID" },
-    });
-
-    // TODO: Send notification to driver about new booking
-
-    console.log(`Booking ${transaction.bookingId} paid successfully`);
-  } else if (transaction.type === "REGISTRATION_FEE") {
-    // Update driver registration status
-    const driver = await prisma.driver.findFirst({
-      where: { userId: transaction.payerId! },
-    });
-
-    if (driver) {
-      await prisma.driver.update({
-        where: { id: driver.id },
-        data: {
-          registrationPaid: true,
-          registrationPaidAt: new Date(),
-          status: "PENDING_VERIFICATION",
-        },
-      });
-
-      console.log(`Driver ${driver.id} registration payment completed`);
-    }
-  }
-}
-
-async function handlePaymentFailed(data: any) {
-  const { reference, message } = data;
-
-  // Find and update the transaction
-  const transaction = await prisma.transaction.findFirst({
-    where: { providerRef: reference },
-  });
-
-  if (transaction) {
-    await prisma.transaction.update({
+  // Use a DB transaction for atomicity
+  await prisma.$transaction(async (tx) => {
+    // Update transaction status
+    await tx.transaction.update({
       where: { id: transaction.id },
       data: {
-        status: "FAILED",
-        failureReason: message || "Payment failed",
+        status: "COMPLETED",
+        provider: data.channel as string | undefined,
         processedAt: new Date(),
-        metadata: data,
+        metadata: data as any,
       },
     });
 
-    // If it's a booking payment, update booking status
+    // Handle based on transaction type
+    if (transaction.type === "ESCROW_DEPOSIT" && transaction.booking) {
+      await tx.booking.update({
+        where: { id: transaction.bookingId! },
+        data: { status: "PAID" },
+      });
+    } else if (transaction.type === "REGISTRATION_FEE") {
+      const driver = await tx.driver.findFirst({
+        where: { userId: transaction.payerId! },
+      });
+
+      if (driver) {
+        await tx.driver.update({
+          where: { id: driver.id },
+          data: {
+            registrationPaid: true,
+            registrationPaidAt: new Date(),
+            status: "PENDING_VERIFICATION",
+          },
+        });
+      }
+    }
+  });
+}
+
+async function handlePaymentFailed(data: Record<string, unknown>) {
+  const reference = data.reference as string;
+  const message = (data.message as string) || "Payment failed";
+
+  // Idempotency: only update if still PENDING
+  const transaction = await prisma.transaction.findFirst({
+    where: { providerRef: reference, status: "PENDING" },
+  });
+
+  if (!transaction) return;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.transaction.update({
+      where: { id: transaction.id },
+      data: {
+        status: "FAILED",
+        failureReason: message,
+        processedAt: new Date(),
+        metadata: data as any,
+      },
+    });
+
     if (transaction.bookingId) {
-      await prisma.booking.update({
+      await tx.booking.update({
         where: { id: transaction.bookingId },
         data: { status: "CANCELLED" },
       });
     }
-
-    console.log(`Payment failed for transaction ${transaction.id}: ${message}`);
-  }
+  });
 }
 
-async function handleTransferComplete(data: any) {
-  const { reference, amount } = data;
+async function handleTransferComplete(data: Record<string, unknown>) {
+  const reference = data.reference as string;
 
-  // Find the transaction
+  // Idempotency: only update if still PENDING or PROCESSING
   const transaction = await prisma.transaction.findFirst({
-    where: { providerRef: reference },
+    where: { providerRef: reference, status: { in: ["PENDING", "PROCESSING"] } },
   });
 
-  if (transaction) {
-    await prisma.transaction.update({
+  if (!transaction) return;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.transaction.update({
       where: { id: transaction.id },
       data: {
         status: "COMPLETED",
         processedAt: new Date(),
-        metadata: data,
+        metadata: data as any,
       },
     });
 
-    // If it's a driver payout, update booking status to RELEASED
+    // If it's a driver payout, update booking status to RELEASED and driver earnings
     if (transaction.type === "DRIVER_PAYOUT" && transaction.bookingId) {
-      await prisma.booking.update({
+      await tx.booking.update({
         where: { id: transaction.bookingId },
         data: {
           status: "RELEASED",
@@ -173,13 +164,12 @@ async function handleTransferComplete(data: any) {
         },
       });
 
-      // Update driver earnings
-      const booking = await prisma.booking.findUnique({
+      const booking = await tx.booking.findUnique({
         where: { id: transaction.bookingId },
       });
 
       if (booking) {
-        await prisma.driver.update({
+        await tx.driver.update({
           where: { id: booking.driverId },
           data: {
             totalEarnings: { increment: transaction.amount },
@@ -187,33 +177,33 @@ async function handleTransferComplete(data: any) {
           },
         });
       }
-
-      console.log(`Driver payout completed for booking ${transaction.bookingId}`);
     }
-  }
+  });
 }
 
-async function handleTransferFailed(data: any) {
-  const { reference, message } = data;
+async function handleTransferFailed(data: Record<string, unknown>) {
+  const reference = data.reference as string;
+  const message = (data.message as string) || "Transfer failed";
 
   const transaction = await prisma.transaction.findFirst({
-    where: { providerRef: reference },
+    where: { providerRef: reference, status: { in: ["PENDING", "PROCESSING"] } },
   });
 
-  if (transaction) {
-    await prisma.transaction.update({
+  if (!transaction) return;
+
+  await prisma.$transaction(async (tx) => {
+    await tx.transaction.update({
       where: { id: transaction.id },
       data: {
         status: "FAILED",
-        failureReason: message || "Transfer failed",
+        failureReason: message,
         processedAt: new Date(),
-        metadata: data,
+        metadata: data as any,
       },
     });
 
-    // Mark booking as disputed if payout failed
     if (transaction.bookingId) {
-      await prisma.booking.update({
+      await tx.booking.update({
         where: { id: transaction.bookingId },
         data: {
           status: "DISPUTED",
@@ -222,7 +212,5 @@ async function handleTransferFailed(data: any) {
         },
       });
     }
-
-    console.log(`Transfer failed for transaction ${transaction.id}: ${message}`);
-  }
+  });
 }

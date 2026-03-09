@@ -57,7 +57,6 @@ export async function GET(
 
     return NextResponse.json(booking);
   } catch (err) {
-    console.error("Booking fetch error:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

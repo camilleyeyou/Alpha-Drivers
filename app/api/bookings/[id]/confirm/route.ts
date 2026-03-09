@@ -34,7 +34,6 @@ export async function POST(
 
     return NextResponse.json({ success: true, booking: updated });
   } catch (err) {
-    console.error("Booking confirm error:", err);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 }

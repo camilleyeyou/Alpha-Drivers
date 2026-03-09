@@ -17,7 +17,12 @@ const baseRegisterSchema = z.object({
   lastName: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   phone: phoneSchema,
   email: z.string().email("Email invalide").optional().or(z.literal("")),
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+  password: z
+    .string()
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+    .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une majuscule")
+    .regex(/[a-z]/, "Le mot de passe doit contenir au moins une minuscule")
+    .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre"),
   confirmPassword: z.string(),
   city: z.enum(["DOUALA", "YAOUNDE", "LIMBE", "BUEA"]),
 });
@@ -25,7 +30,7 @@ const baseRegisterSchema = z.object({
 // Login schema
 export const loginSchema = z.object({
   phone: phoneSchema,
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+  password: z.string().min(1, "Le mot de passe est requis"),
 });
 
 // Register schema with password confirmation

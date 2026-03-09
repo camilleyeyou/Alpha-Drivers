@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/db/prisma";
 import { registerSchema } from "@/lib/validators";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 3 registrations per hour per IP
+  const rateLimited = await checkRateLimit(request, "register");
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
 
@@ -20,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     // Phone is already formatted by the Zod schema transform (+237...)
 
-    // Check if user already exists
+    // Check if user already exists (generic message to prevent user enumeration)
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [{ phone }, ...(email ? [{ email }] : [])],
@@ -28,18 +33,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingUser) {
-      if (existingUser.phone === phone) {
-        return NextResponse.json(
-          { error: "Ce numéro de téléphone est déjà utilisé" },
-          { status: 400 }
-        );
-      }
-      if (email && existingUser.email === email) {
-        return NextResponse.json(
-          { error: "Cet email est déjà utilisé" },
-          { status: 400 }
-        );
-      }
+      return NextResponse.json(
+        { error: "Un compte avec ces informations existe déjà." },
+        { status: 400 }
+      );
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
@@ -71,7 +68,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Registration error:", error);
+    // Registration error logged server-side only
     return NextResponse.json(
       { error: "Une erreur est survenue lors de l'inscription" },
       { status: 500 }
