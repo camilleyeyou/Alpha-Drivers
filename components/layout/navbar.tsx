@@ -3,28 +3,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 import { Menu, X, User, LogOut, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/ui/language-toggle";
+import { useTranslation } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
-
-const navigation = [
-  { name: "Accueil", href: "/" },
-  { name: "Chauffeurs", href: "/drivers/douala" },
-  { name: "Tarifs", href: "/tarifs" },
-  { name: "Devenir Chauffeur", href: "/register/driver" },
-];
 
 export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // TODO: Replace with actual auth state
-  const isLoggedIn = false;
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const user = session?.user;
+  const { t } = useTranslation();
+
+  const navigation = [
+    { name: t.nav.home, href: "/" },
+    { name: t.nav.drivers, href: "/drivers/douala" },
+    { name: t.nav.pricing, href: "/tarifs" },
+    { name: t.nav.becomeDriver, href: "/register/driver" },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 transition-transform duration-150 hover:scale-105">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
             <Car className="h-6 w-6 text-white" />
           </div>
@@ -37,11 +42,13 @@ export function Navbar() {
         <div className="hidden md:flex md:items-center md:gap-8">
           {navigation.map((item) => (
             <Link
-              key={item.name}
+              key={item.href}
               href={item.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary-600",
-                pathname === item.href ? "text-primary-600" : "text-gray-600"
+                "relative text-sm font-medium transition-colors hover:text-primary-600 py-1",
+                pathname === item.href ? "text-primary-600" : "text-gray-600",
+                "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-200",
+                pathname === item.href ? "after:w-full" : "after:w-0 hover:after:w-full"
               )}
             >
               {item.name}
@@ -49,52 +56,64 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex md:items-center md:gap-4">
+        {/* Desktop Auth Buttons + Language Toggle */}
+        <div className="hidden md:flex md:items-center md:gap-3">
+          <LanguageToggle />
           {isLoggedIn ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <Link href="/dashboard">
                 <Button variant="ghost" size="sm">
                   <User className="mr-2 h-4 w-4" />
-                  Mon compte
+                  {user?.firstName || t.nav.myAccount}
                 </Button>
               </Link>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
                 <LogOut className="mr-2 h-4 w-4" />
-                Déconnexion
+                {t.nav.logout}
               </Button>
             </div>
           ) : (
             <>
               <Link href="/login">
                 <Button variant="ghost" size="sm">
-                  Connexion
+                  {t.nav.login}
                 </Button>
               </Link>
               <Link href="/register">
-                <Button size="sm">Inscription</Button>
+                <Button size="sm">{t.nav.register}</Button>
               </Link>
             </>
           )}
         </div>
 
         {/* Mobile menu button */}
-        <button
-          type="button"
-          className="md:hidden rounded-lg p-2 text-gray-600 hover:bg-gray-100"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <LanguageToggle />
+          <button
+            type="button"
+            className="rounded-lg p-2 text-gray-600 hover:bg-gray-100"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t bg-white">
-          <div className="space-y-1 px-4 py-4">
+      <div
+        className={cn(
+          "md:hidden border-t bg-white overflow-hidden transition-all duration-300 ease-in-out",
+          mobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 border-t-0"
+        )}
+      >
+        <div className="space-y-1 px-4 py-4">
             {navigation.map((item) => (
               <Link
-                key={item.name}
+                key={item.href}
                 href={item.href}
                 className={cn(
                   "block rounded-lg px-4 py-3 text-base font-medium transition-colors",
@@ -115,27 +134,29 @@ export function Navbar() {
                   className="block rounded-lg px-4 py-3 text-base font-medium text-gray-600 hover:bg-gray-50"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Mon compte
+                  {t.nav.myAccount}
                 </Link>
-                <button className="w-full rounded-lg px-4 py-3 text-left text-base font-medium text-red-600 hover:bg-red-50">
-                  Déconnexion
+                <button
+                  className="w-full rounded-lg px-4 py-3 text-left text-base font-medium text-red-600 hover:bg-red-50"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                  {t.nav.logout}
                 </button>
               </>
             ) : (
               <div className="flex gap-4 px-4 pt-2">
                 <Link href="/login" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="outline" className="w-full">
-                    Connexion
+                    {t.nav.login}
                   </Button>
                 </Link>
                 <Link href="/register" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full">Inscription</Button>
+                  <Button className="w-full">{t.nav.register}</Button>
                 </Link>
               </div>
             )}
           </div>
         </div>
-      )}
     </header>
   );
 }

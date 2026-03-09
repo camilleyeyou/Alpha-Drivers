@@ -1,79 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/db/prisma";
 import { City } from "@/types";
-import { getMockDriversByCity, getAllMockDrivers } from "@/lib/mock-data";
-
-// Demo mode check
-const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    
-    // Parse query parameters
+
     const city = searchParams.get("city")?.toUpperCase() as City | undefined;
-    const minRate = searchParams.get("minRate") ? parseInt(searchParams.get("minRate")!) : undefined;
-    const maxRate = searchParams.get("maxRate") ? parseInt(searchParams.get("maxRate")!) : undefined;
-    const minRating = searchParams.get("minRating") ? parseFloat(searchParams.get("minRating")!) : undefined;
+    const minRate = searchParams.get("minRate")
+      ? parseInt(searchParams.get("minRate")!)
+      : undefined;
+    const maxRate = searchParams.get("maxRate")
+      ? parseInt(searchParams.get("maxRate")!)
+      : undefined;
+    const minRating = searchParams.get("minRating")
+      ? parseFloat(searchParams.get("minRating")!)
+      : undefined;
     const search = searchParams.get("search");
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const sortBy = searchParams.get("sortBy") || "avgRating";
     const sortOrder = searchParams.get("sortOrder") || "desc";
-
-    // Demo mode - use mock data
-    if (isDemoMode) {
-      let drivers = city ? getMockDriversByCity(city) : getAllMockDrivers();
-      
-      // Apply filters
-      if (minRate) drivers = drivers.filter(d => d.hourlyRate >= minRate);
-      if (maxRate) drivers = drivers.filter(d => d.hourlyRate <= maxRate);
-      if (minRating) drivers = drivers.filter(d => d.avgRating >= minRating);
-      if (search) {
-        const searchLower = search.toLowerCase();
-        drivers = drivers.filter(d => 
-          d.firstName.toLowerCase().includes(searchLower) ||
-          d.lastName.toLowerCase().includes(searchLower) ||
-          d.bio?.toLowerCase().includes(searchLower)
-        );
-      }
-      
-      // Sort
-      drivers.sort((a, b) => {
-        let aVal: number, bVal: number;
-        if (sortBy === "hourlyRate") {
-          aVal = a.hourlyRate;
-          bVal = b.hourlyRate;
-        } else if (sortBy === "totalTrips") {
-          aVal = a.totalTrips;
-          bVal = b.totalTrips;
-        } else {
-          aVal = a.avgRating;
-          bVal = b.avgRating;
-        }
-        return sortOrder === "desc" ? bVal - aVal : aVal - bVal;
-      });
-      
-      // Paginate
-      const total = drivers.length;
-      const paginatedDrivers = drivers.slice((page - 1) * limit, page * limit);
-      
-      return NextResponse.json({
-        success: true,
-        data: {
-          drivers: paginatedDrivers,
-          pagination: {
-            page,
-            limit,
-            total,
-            totalPages: Math.ceil(total / limit),
-          },
-        },
-        demo: true,
-      });
-    }
-
-    // Production mode - use database
-    const { default: prisma } = await import("@/lib/db/prisma");
 
     // Build where clause
     const where: any = {
@@ -107,7 +54,13 @@ export async function GET(request: NextRequest) {
       where,
       include: {
         user: {
-          select: { id: true, firstName: true, lastName: true, avatarUrl: true, city: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatarUrl: true,
+            city: true,
+          },
         },
       },
       orderBy,
@@ -134,21 +87,19 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         drivers: driverCards,
-        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
     });
   } catch (error) {
     console.error("Error fetching drivers:", error);
-    
-    // Fallback to mock data on error
-    const allDrivers = getAllMockDrivers();
-    return NextResponse.json({
-      success: true,
-      data: {
-        drivers: allDrivers.slice(0, 10),
-        pagination: { page: 1, limit: 10, total: allDrivers.length, totalPages: 1 },
-      },
-      demo: true,
-    });
+    return NextResponse.json(
+      { error: "Une erreur est survenue lors du chargement des chauffeurs" },
+      { status: 500 }
+    );
   }
 }

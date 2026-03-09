@@ -81,6 +81,11 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      transitionDuration: {
+        "150": "150ms",
+        "200": "200ms",
+        "300": "300ms",
+      },
       keyframes: {
         "fade-in": {
           from: { opacity: "0" },
@@ -97,12 +102,21 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        "scale-up": {
+          from: { transform: "scale(0.95)", opacity: "0" },
+          to: { transform: "scale(1)", opacity: "1" },
+        },
+        pulse: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.3s ease-out",
         "fade-in-up": "fade-in-up 0.4s ease-out",
         "slide-in-right": "slide-in-right 0.4s ease-out",
         shimmer: "shimmer 2s infinite",
+        "scale-up": "scale-up 0.3s ease-out",
       },
     },
   },

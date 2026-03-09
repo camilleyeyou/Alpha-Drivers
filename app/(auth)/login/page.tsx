@@ -5,18 +5,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { Car, Phone, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { loginSchema, LoginInput } from "@/lib/validators";
+import { useTranslation } from "@/lib/i18n/context";
 
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   const {
     register,
@@ -31,22 +34,21 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const result = await signIn("credentials", {
+        phone: data.phone,
+        password: data.password,
+        redirect: false,
       });
 
-      const result = await res.json();
-
-      if (!res.ok) {
-        setError(result.error || "Une erreur est survenue");
+      if (result?.error) {
+        setError(t.login.errorInvalid);
         return;
       }
 
       router.push("/dashboard");
+      router.refresh();
     } catch {
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      setError(t.login.errorGeneric);
     } finally {
       setIsLoading(false);
     }
@@ -64,29 +66,29 @@ export default function LoginPage() {
         </span>
       </Link>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md animate-fade-in-up">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Connexion</CardTitle>
+          <CardTitle className="text-2xl">{t.login.title}</CardTitle>
           <CardDescription>
-            Entrez vos identifiants pour accéder à votre compte
+            {t.login.subtitle}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 animate-fade-in" role="alert">
                 {error}
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Numéro de téléphone</Label>
+              <Label htmlFor="phone">{t.login.phone} <span className="text-red-500">*</span></Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="6XX XXX XXX"
+                  placeholder={t.login.phonePlaceholder}
                   className="pl-10"
                   {...register("phone")}
                   error={errors.phone?.message}
@@ -96,12 +98,12 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Mot de passe</Label>
+                <Label htmlFor="password">{t.login.password} <span className="text-red-500">*</span></Label>
                 <Link
                   href="/forgot-password"
                   className="text-sm text-primary-600 hover:underline"
                 >
-                  Mot de passe oublié ?
+                  {t.login.forgotPassword}
                 </Link>
               </div>
               <div className="relative">
@@ -109,7 +111,7 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder={t.login.passwordPlaceholder}
                   className="pl-10 pr-10"
                   {...register("password")}
                   error={errors.password?.message}
@@ -125,14 +127,14 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full" size="lg" loading={isLoading}>
-              Se connecter
+              {t.login.submit}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-gray-600">Pas encore de compte ?</span>{" "}
+            <span className="text-gray-600">{t.login.noAccount}</span>{" "}
             <Link href="/register" className="font-medium text-primary-600 hover:underline">
-              Créer un compte
+              {t.login.createAccount}
             </Link>
           </div>
 
@@ -141,7 +143,7 @@ export default function LoginPage() {
               href="/register/driver"
               className="text-sm text-gray-600 hover:text-primary-600"
             >
-              Vous êtes chauffeur ? Inscrivez-vous ici
+              {t.login.driverLink}
             </Link>
           </div>
         </CardContent>
@@ -149,7 +151,7 @@ export default function LoginPage() {
 
       {/* Payment methods */}
       <div className="mt-8 flex items-center gap-4 text-sm text-gray-500">
-        <span>Paiements sécurisés par</span>
+        <span>{t.login.securePayments}</span>
         <div className="flex gap-2">
           <span className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black">
             MTN MoMo

@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/chauffeur-:city',
+        destination: '/chauffeur/:city',
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

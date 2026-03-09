@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Star, MapPin, Clock, Languages } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency, getInitials } from "@/lib/utils";
 import { DriverCard as DriverCardType, CITIES } from "@/types";
+import { useTranslation } from "@/lib/i18n/context";
 
 interface DriverCardProps {
   driver: DriverCardType;
@@ -14,22 +17,23 @@ interface DriverCardProps {
 
 export function DriverCard({ driver, citySlug = "douala" }: DriverCardProps) {
   const rating = Number(driver.avgRating) || 0;
+  const { t } = useTranslation();
 
   return (
-    <Card className="group overflow-hidden transition-all hover:shadow-lg">
+    <Card className="group cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
       <CardContent className="p-0">
         <div className="flex flex-col sm:flex-row">
           {/* Avatar Section */}
           <div className="relative flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 p-6 sm:w-48">
-            <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
+            <Avatar className="h-24 w-24 border-4 border-white shadow-lg transition-all duration-200 group-hover:ring-4 group-hover:ring-primary-200">
               <AvatarImage src={driver.avatarUrl || undefined} alt={driver.firstName} />
               <AvatarFallback className="text-2xl">
                 {getInitials(driver.firstName, driver.lastName)}
               </AvatarFallback>
             </Avatar>
             {driver.totalTrips >= 10 && (
-              <Badge className="absolute bottom-4 right-4" variant="success">
-                Vérifié
+              <Badge className="absolute bottom-4 right-4 animate-fade-in" variant="success">
+                {t.common.verified}
               </Badge>
             )}
           </div>
@@ -44,14 +48,14 @@ export function DriverCard({ driver, citySlug = "douala" }: DriverCardProps) {
                 <div className="mt-1 flex items-center gap-1">
                   <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
                   <span className="font-medium">{rating.toFixed(1)}</span>
-                  <span className="text-gray-500">({driver.totalTrips} trajets)</span>
+                  <span className="text-gray-500">({driver.totalTrips} {t.common.trips})</span>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="text-right transition-transform duration-200 group-hover:scale-105">
                 <p className="text-2xl font-bold text-primary-600">
                   {formatCurrency(driver.hourlyRate)}
                 </p>
-                <p className="text-sm text-gray-500">par heure</p>
+                <p className="text-sm text-gray-500">{t.common.perHour}</p>
               </div>
             </div>
 
@@ -63,7 +67,7 @@ export function DriverCard({ driver, citySlug = "douala" }: DriverCardProps) {
               {driver.experienceYears && (
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />
-                  <span>{driver.experienceYears} ans d'expérience</span>
+                  <span>{driver.experienceYears} {t.common.yearsExperience}</span>
                 </div>
               )}
               <div className="flex items-center gap-1">
@@ -83,12 +87,12 @@ export function DriverCard({ driver, citySlug = "douala" }: DriverCardProps) {
 
             <div className="mt-6 flex gap-3">
               <Link href={`/drivers/${citySlug}/${driver.slug}`} className="flex-1">
-                <Button variant="outline" className="w-full">
-                  Voir le profil
+                <Button variant="outline" className="w-full transition-colors duration-150 hover:border-primary-400">
+                  {t.common.viewProfile}
                 </Button>
               </Link>
               <Link href={`/bookings/new?driver=${driver.id}`} className="flex-1">
-                <Button className="w-full">Réserver</Button>
+                <Button className="w-full transition-colors duration-150">{t.common.book}</Button>
               </Link>
             </div>
           </div>

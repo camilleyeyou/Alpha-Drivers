@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { Car, User, Phone, Mail, Lock, Eye, EyeOff, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,12 +14,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { registerSchema, RegisterInput } from "@/lib/validators";
 import { CITIES } from "@/types";
+import { useTranslation } from "@/lib/i18n/context";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   const {
     register,
@@ -43,13 +46,27 @@ export default function RegisterPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        setError(result.error || "Une erreur est survenue");
+        setError(result.error || t.register.errorGeneric);
         return;
       }
 
-      router.push("/login?registered=true");
+      // Auto-sign-in after successful registration
+      const signInResult = await signIn("credentials", {
+        phone: data.phone,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        // Registration succeeded but auto-login failed
+        router.push("/login?registered=true");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
     } catch {
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      setError(t.register.errorGeneric);
     } finally {
       setIsLoading(false);
     }
@@ -67,29 +84,29 @@ export default function RegisterPage() {
         </span>
       </Link>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md animate-fade-in-up">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Créer un compte</CardTitle>
+          <CardTitle className="text-2xl">{t.register.title}</CardTitle>
           <CardDescription>
-            Inscrivez-vous pour réserver un chauffeur
+            {t.register.subtitle}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 animate-fade-in" role="alert">
                 {error}
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">Prénom</Label>
+                <Label htmlFor="firstName">{t.register.firstName} <span className="text-red-500">*</span></Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                   <Input
                     id="firstName"
-                    placeholder="Jean"
+                    placeholder={t.register.firstNamePlaceholder}
                     className="pl-10"
                     {...register("firstName")}
                     error={errors.firstName?.message}
@@ -97,10 +114,10 @@ export default function RegisterPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Nom</Label>
+                <Label htmlFor="lastName">{t.register.lastName} <span className="text-red-500">*</span></Label>
                 <Input
                   id="lastName"
-                  placeholder="Dupont"
+                  placeholder={t.register.lastNamePlaceholder}
                   {...register("lastName")}
                   error={errors.lastName?.message}
                 />
@@ -108,13 +125,13 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Numéro de téléphone</Label>
+              <Label htmlFor="phone">{t.register.phone} <span className="text-red-500">*</span></Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="6XX XXX XXX"
+                  placeholder={t.register.phonePlaceholder}
                   className="pl-10"
                   {...register("phone")}
                   error={errors.phone?.message}
@@ -123,13 +140,13 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email (optionnel)</Label>
+              <Label htmlFor="email">{t.register.email}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="jean@example.com"
+                  placeholder={t.register.emailPlaceholder}
                   className="pl-10"
                   {...register("email")}
                   error={errors.email?.message}
@@ -138,11 +155,11 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="city">Ville</Label>
+              <Label htmlFor="city">{t.register.city} <span className="text-red-500">*</span></Label>
               <Select onValueChange={(value) => setValue("city", value as any)}>
                 <SelectTrigger error={!!errors.city}>
                   <MapPin className="mr-2 h-5 w-5 text-gray-400" />
-                  <SelectValue placeholder="Sélectionnez votre ville" />
+                  <SelectValue placeholder={t.register.cityPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(CITIES).map(([key, city]) => (
@@ -158,13 +175,13 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{t.register.password} <span className="text-red-500">*</span></Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder={t.register.passwordPlaceholder}
                   className="pl-10 pr-10"
                   {...register("password")}
                   error={errors.password?.message}
@@ -180,13 +197,13 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword">{t.register.confirmPassword} <span className="text-red-500">*</span></Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                 <Input
                   id="confirmPassword"
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder={t.register.passwordPlaceholder}
                   className="pl-10"
                   {...register("confirmPassword")}
                   error={errors.confirmPassword?.message}
@@ -195,14 +212,14 @@ export default function RegisterPage() {
             </div>
 
             <Button type="submit" className="w-full" size="lg" loading={isLoading}>
-              Créer mon compte
+              {t.register.submit}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-gray-600">Déjà un compte ?</span>{" "}
+            <span className="text-gray-600">{t.register.hasAccount}</span>{" "}
             <Link href="/login" className="font-medium text-primary-600 hover:underline">
-              Se connecter
+              {t.register.loginLink}
             </Link>
           </div>
 
@@ -211,18 +228,18 @@ export default function RegisterPage() {
               href="/register/driver"
               className="text-sm text-gray-600 hover:text-primary-600"
             >
-              Vous êtes chauffeur ? Inscrivez-vous ici
+              {t.register.driverLink}
             </Link>
           </div>
 
           <p className="mt-4 text-center text-xs text-gray-500">
-            En créant un compte, vous acceptez nos{" "}
+            {t.register.terms}{" "}
             <Link href="/terms" className="underline">
-              Conditions d'utilisation
+              {t.register.termsOfUse}
             </Link>{" "}
-            et notre{" "}
+            {t.register.and}{" "}
             <Link href="/privacy" className="underline">
-              Politique de confidentialité
+              {t.register.privacyPolicy}
             </Link>
             .
           </p>

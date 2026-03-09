@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DriverCard } from "@/components/driver/driver-card";
 import { CITIES, CITY_SLUGS, City } from "@/types";
-import { getMockDriversByCity, CITY_STATS } from "@/lib/mock-data";
+import prisma from "@/lib/db/prisma";
+import { getServerDictionary } from "@/lib/i18n";
 
 // City data for SEO
 const cityData: Record<string, {
@@ -53,7 +54,10 @@ const cityData: Record<string, {
   },
 };
 
-// Static params for build time
+// Render dynamically — these pages query live driver data from the DB
+export const dynamic = "force-dynamic";
+
+// Provide known city slugs for routing hints (won't prerender)
 export function generateStaticParams() {
   return Object.keys(cityData).map((city) => ({ city }));
 }
@@ -62,8 +66,6 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { city: string } }): Promise<Metadata> {
   const data = cityData[params.city];
   if (!data) return { title: "Page non trouvée" };
-
-  const cityName = CITIES[data.city].name;
 
   return {
     title: data.titleFr,
@@ -84,14 +86,47 @@ export async function generateMetadata({ params }: { params: { city: string } })
   };
 }
 
-export default function CityLandingPage({ params }: { params: { city: string } }) {
+export default async function CityLandingPage({ params }: { params: { city: string } }) {
   const data = cityData[params.city];
   if (!data) notFound();
 
   const cityName = CITIES[data.city].name;
-  // Use centralized mock data
-  const drivers = getMockDriversByCity(data.city).slice(0, 3); // Show only 3 on landing page
-  const stats = CITY_STATS[data.city];
+  const t = await getServerDictionary();
+
+  const driversRaw = await prisma.driver.findMany({
+    where: {
+      cities: { has: data.city },
+      status: "VERIFIED",
+      user: { isActive: true },
+    },
+    include: {
+      user: {
+        select: { id: true, firstName: true, lastName: true, avatarUrl: true },
+      },
+    },
+    orderBy: { avgRating: "desc" },
+    take: 3,
+  });
+
+  const drivers = driversRaw.map((d) => ({
+    id: d.id,
+    slug: d.slug || d.id,
+    firstName: d.user.firstName || "",
+    lastName: d.user.lastName || "",
+    avatarUrl: d.user.avatarUrl,
+    hourlyRate: d.hourlyRate,
+    avgRating: Number(d.avgRating),
+    totalTrips: d.totalTrips,
+    experienceYears: d.experienceYears,
+    languages: d.languages,
+    cities: d.cities as City[],
+    bio: d.bio,
+  }));
+
+  const driverCount = await prisma.driver.count({
+    where: { cities: { has: data.city }, status: "VERIFIED" },
+  });
+  const stats = { driverCount };
 
   // Schema.org markup for SEO
   const schemaData = {
@@ -138,14 +173,14 @@ export default function CityLandingPage({ params }: { params: { city: string } }
             <div className="mt-8 flex flex-wrap gap-4">
               <Badge className="bg-white/20 text-white hover:bg-white/30">
                 <Shield className="mr-1 h-4 w-4" />
-                Chauffeurs vérifiés
+                {t.chauffeur.verifiedDrivers}
               </Badge>
               <Badge className="bg-white/20 text-white hover:bg-white/30">
                 <Star className="mr-1 h-4 w-4" />
-                4.8/5 Note moyenne
+                {t.chauffeur.avgRating}
               </Badge>
               <Badge className="bg-white/20 text-white hover:bg-white/30">
-                {stats.driverCount}+ chauffeurs disponibles
+                {t.chauffeur.driversAvailable.replace("{count}", String(stats.driverCount))}
               </Badge>
             </div>
           </div>
@@ -156,12 +191,12 @@ export default function CityLandingPage({ params }: { params: { city: string } }
           <div className="container-app">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="heading-3">Chauffeurs disponibles à {cityName}</h2>
-                <p className="mt-1 text-gray-600">{drivers.length} chauffeurs vérifiés</p>
+                <h2 className="heading-3">{t.chauffeur.availableIn.replace("{city}", cityName)}</h2>
+                <p className="mt-1 text-gray-600">{t.chauffeur.verifiedCount.replace("{count}", String(drivers.length))}</p>
               </div>
               <Link href={`/drivers/${params.city}`}>
                 <Button variant="outline" className="gap-2">
-                  Voir tous les chauffeurs
+                  {t.chauffeur.seeAllDrivers}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -178,30 +213,14 @@ export default function CityLandingPage({ params }: { params: { city: string } }
         <section className="bg-gray-50 section-padding">
           <div className="container-app">
             <div className="prose prose-lg mx-auto max-w-3xl">
-              <h2>Pourquoi choisir Alpha-Drivers à {cityName} ?</h2>
-              <p>
-                Alpha-Drivers est la plateforme de référence pour trouver un chauffeur professionnel 
-                à {cityName}. Que vous ayez besoin d'un chauffeur pour vos déplacements quotidiens, 
-                vos rendez-vous d'affaires ou vos événements spéciaux, nos chauffeurs vérifiés sont 
-                à votre disposition.
-              </p>
-              <h3>Service de chauffeur privé à {cityName}</h3>
-              <p>
-                Nos chauffeurs connaissent parfaitement {cityName} et ses environs. Ils vous garantissent 
-                un service ponctuel, sécurisé et professionnel. Tous nos chauffeurs passent par un 
-                processus de vérification rigoureux incluant la validation de leur CNI et permis de conduire.
-              </p>
-              <h3>Tarifs transparents</h3>
-              <p>
-                Sur Alpha-Drivers, les chauffeurs fixent leurs propres tarifs horaires. Vous pouvez 
-                comparer les prix et choisir le chauffeur qui correspond à votre budget. Pas de frais 
-                cachés, vous savez exactement ce que vous payez.
-              </p>
-              <h3>Paiement sécurisé par Mobile Money</h3>
-              <p>
-                Payez facilement par MTN Mobile Money ou Orange Money. Vos fonds sont protégés par 
-                notre système d'escrow jusqu'à la fin de votre service. Votre satisfaction est notre priorité.
-              </p>
+              <h2>{t.chauffeur.whyChoose.replace("{city}", cityName)}</h2>
+              <p>{t.chauffeur.whyChooseDesc.replace(/\{city\}/g, cityName)}</p>
+              <h3>{t.chauffeur.serviceTitle.replace("{city}", cityName)}</h3>
+              <p>{t.chauffeur.serviceDesc.replace(/\{city\}/g, cityName)}</p>
+              <h3>{t.chauffeur.transparentPricing}</h3>
+              <p>{t.chauffeur.transparentPricingDesc}</p>
+              <h3>{t.chauffeur.securePayment}</h3>
+              <p>{t.chauffeur.securePaymentDesc}</p>
             </div>
           </div>
         </section>
@@ -209,17 +228,17 @@ export default function CityLandingPage({ params }: { params: { city: string } }
         {/* CTA */}
         <section className="section-padding">
           <div className="container-app text-center">
-            <h2 className="heading-2">Prêt à réserver votre chauffeur à {cityName} ?</h2>
+            <h2 className="heading-2">{t.chauffeur.ctaTitle.replace("{city}", cityName)}</h2>
             <p className="mx-auto mt-4 max-w-xl text-gray-600">
-              Créez votre compte gratuitement et réservez votre premier chauffeur en quelques minutes.
+              {t.chauffeur.ctaSubtitle}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/register">
-                <Button size="lg">Créer un compte gratuit</Button>
+                <Button size="lg">{t.common.createFreeAccount}</Button>
               </Link>
               <Link href={`/drivers/${params.city}`}>
                 <Button size="lg" variant="outline">
-                  Voir tous les chauffeurs
+                  {t.chauffeur.seeAllDrivers}
                 </Button>
               </Link>
             </div>
