@@ -230,6 +230,7 @@ const en: Dictionary = {
     myDocuments: "My documents",
     editProfile: "Edit my profile",
     becomeDriver: "Become a driver",
+    bookingCreated: "Your booking has been created successfully! The driver will be notified.",
   },
 
   // Tarifs page
@@ -601,6 +602,19 @@ const en: Dictionary = {
     rate: "Rate",
     commissionNote: "A {percent}% commission is added to cover support and security.",
     fillRequired: "Please fill in all required fields.",
+    errorGeneric: "An error occurred. Please try again.",
+  },
+
+  // Edit profile
+  editProfile: {
+    title: "Edit my profile",
+    subtitle: "Update your personal information and driver profile.",
+    personalInfo: "Personal information",
+    driverProfile: "Driver profile",
+    paymentInfo: "Payment information",
+    phoneCannotChange: "Phone number cannot be changed.",
+    save: "Save changes",
+    success: "Profile updated successfully!",
     errorGeneric: "An error occurred. Please try again.",
   },
 

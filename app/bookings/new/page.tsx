@@ -25,7 +25,14 @@ export default async function NewBookingPage({
   searchParams: { driver?: string; city?: string };
 }) {
   const session = await auth();
-  if (!session) redirect("/login?callbackUrl=/bookings/new" + (searchParams.driver ? `?driver=${searchParams.driver}` : ""));
+  if (!session) {
+    const cbParams = new URLSearchParams();
+    if (searchParams.driver) cbParams.set("driver", searchParams.driver);
+    if (searchParams.city) cbParams.set("city", searchParams.city);
+    const cbQuery = cbParams.toString();
+    const callbackUrl = `/bookings/new${cbQuery ? `?${cbQuery}` : ""}`;
+    redirect(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  }
 
   const t = await getServerDictionary();
 

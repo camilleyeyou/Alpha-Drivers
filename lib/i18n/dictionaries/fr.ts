@@ -228,6 +228,7 @@ const fr = {
     myDocuments: "Mes documents",
     editProfile: "Modifier mon profil",
     becomeDriver: "Devenir chauffeur",
+    bookingCreated: "Votre réservation a été créée avec succès ! Le chauffeur sera notifié.",
   },
 
   // Tarifs page
@@ -599,6 +600,19 @@ const fr = {
     rate: "Tarif",
     commissionNote: "Une commission de {percent}% est ajoutée pour couvrir le support et la sécurité.",
     fillRequired: "Veuillez remplir tous les champs obligatoires.",
+    errorGeneric: "Une erreur est survenue. Veuillez réessayer.",
+  },
+
+  // Edit profile
+  editProfile: {
+    title: "Modifier mon profil",
+    subtitle: "Mettez à jour vos informations personnelles et votre profil chauffeur.",
+    personalInfo: "Informations personnelles",
+    driverProfile: "Profil chauffeur",
+    paymentInfo: "Informations de paiement",
+    phoneCannotChange: "Le numéro de téléphone ne peut pas être modifié.",
+    save: "Enregistrer les modifications",
+    success: "Profil mis à jour avec succès !",
     errorGeneric: "Une erreur est survenue. Veuillez réessayer.",
   },
 

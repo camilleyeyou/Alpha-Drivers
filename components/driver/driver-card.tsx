@@ -93,7 +93,7 @@ export function DriverCard({ driver, citySlug = "douala" }: DriverCardProps) {
                   {t.common.viewProfile}
                 </Button>
               </Link>
-              <Link href={`/bookings/new?driver=${driver.id}`} className="flex-1">
+              <Link href={`/bookings/new?driver=${driver.id}&city=${citySlug}`} className="flex-1">
                 <Button className="w-full">{t.common.book}</Button>
               </Link>
             </div>

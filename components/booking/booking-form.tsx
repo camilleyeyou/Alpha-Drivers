@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Clock, MapPin, MessageSquare } from "lucide-react";
+import { Calendar, Clock, MapPin, MessageSquare, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -233,8 +233,9 @@ export function BookingForm({
         </div>
       </div>
 
-      <Button type="submit" className="w-full" size="lg" loading={isLoading}>
-        {t.booking.confirm}
+      <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isLoading ? t.common.loading : t.booking.confirm}
       </Button>
     </form>
   );

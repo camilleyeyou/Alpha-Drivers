@@ -22,13 +22,18 @@ import { Badge } from "@/components/ui/badge";
 import prisma from "@/lib/db/prisma";
 import { getServerDictionary } from "@/lib/i18n";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { booking?: string };
+}) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
   const user = session.user;
   const isDriver = user.role === "DRIVER";
   const t = await getServerDictionary();
+  const bookingCreated = searchParams.booking === "created";
 
   // Get driver data if applicable
   let driver = null;
@@ -124,6 +129,16 @@ export default async function DashboardPage() {
       </header>
 
       <main className="container-app py-10">
+        {/* Booking success banner */}
+        {bookingCreated && (
+          <div className="mb-6 rounded-xl bg-green-50 border border-green-200 p-4 flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600 shrink-0" />
+            <p className="text-sm font-medium text-green-800">
+              {t.dashboard.bookingCreated}
+            </p>
+          </div>
+        )}
+
         {/* Welcome */}
         <div className="mb-10">
           <h1 className="font-display text-3xl font-extrabold text-gray-900">
@@ -342,13 +357,15 @@ export default async function DashboardPage() {
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   </Link>
-                  <Button className="w-full justify-between" variant="outline">
-                    <span className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary-500" />
-                      {t.dashboard.editProfile}
-                    </span>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                  <Link href="/dashboard/profile">
+                    <Button className="w-full justify-between" variant="outline">
+                      <span className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-primary-500" />
+                        {t.dashboard.editProfile}
+                      </span>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             )}
@@ -380,6 +397,18 @@ export default async function DashboardPage() {
                       <span className="flex items-center gap-2">
                         <User className="h-4 w-4 text-primary-500" />
                         {t.dashboard.becomeDriver}
+                      </span>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard/profile">
+                    <Button
+                      className="w-full justify-between mt-2"
+                      variant="outline"
+                    >
+                      <span className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-primary-500" />
+                        {t.dashboard.editProfile}
                       </span>
                       <ChevronRight className="h-4 w-4" />
                     </Button>
