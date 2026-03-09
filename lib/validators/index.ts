@@ -78,6 +78,30 @@ export const reviewSchema = z.object({
   comment: z.string().max(1000).optional(),
 });
 
+// Document upload schema
+export const documentUploadSchema = z.object({
+  type: z.enum([
+    "CNI_FRONT",
+    "CNI_BACK",
+    "DRIVING_LICENSE_FRONT",
+    "DRIVING_LICENSE_BACK",
+    "PROFILE_PHOTO",
+  ]),
+});
+
+// Admin: reject driver schema
+export const rejectDriverSchema = z.object({
+  rejectionReason: z
+    .string()
+    .min(10, "La raison doit contenir au moins 10 caractères"),
+});
+
+// Admin: review document schema
+export const reviewDocumentSchema = z.object({
+  status: z.enum(["APPROVED", "REJECTED"]),
+  rejectionReason: z.string().optional(),
+});
+
 // Type exports
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -85,3 +109,6 @@ export type DriverRegisterInput = z.infer<typeof driverRegisterSchema>;
 export type BookingInput = z.infer<typeof bookingSchema>;
 export type OtpInput = z.infer<typeof otpSchema>;
 export type ReviewInput = z.infer<typeof reviewSchema>;
+export type DocumentUploadInput = z.infer<typeof documentUploadSchema>;
+export type RejectDriverInput = z.infer<typeof rejectDriverSchema>;
+export type ReviewDocumentInput = z.infer<typeof reviewDocumentSchema>;
