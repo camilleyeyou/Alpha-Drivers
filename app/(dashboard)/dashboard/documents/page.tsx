@@ -25,7 +25,7 @@ export default async function DriverDocumentsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  if (session.user.role !== "DRIVER" || !session.user.driverId) {
+  if (!session.user.driverId) {
     redirect("/dashboard");
   }
 

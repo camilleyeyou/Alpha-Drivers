@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
   const user = session!.user;
 
-  if (user.role !== "DRIVER" || !user.driverId) {
+  if (!user.driverId) {
     return NextResponse.json(
       { error: "Seuls les chauffeurs peuvent téléverser des documents." },
       { status: 403 }

@@ -333,17 +333,15 @@ export default async function DashboardPage() {
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   )}
-                  {driver.status === "PENDING_VERIFICATION" && (
-                    <Link href="/dashboard/documents">
-                      <Button className="w-full justify-between" variant="outline">
-                        <span className="flex items-center gap-2">
-                          <Upload className="h-4 w-4 text-primary-500" />
-                          {t.dashboard.myDocuments}
-                        </span>
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  )}
+                  <Link href="/dashboard/documents">
+                    <Button className="w-full justify-between" variant="outline">
+                      <span className="flex items-center gap-2">
+                        <Upload className="h-4 w-4 text-primary-500" />
+                        {t.dashboard.myDocuments}
+                      </span>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
                   <Button className="w-full justify-between" variant="outline">
                     <span className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-primary-500" />
