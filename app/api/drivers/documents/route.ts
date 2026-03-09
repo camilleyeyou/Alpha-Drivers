@@ -90,6 +90,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // When profile photo is uploaded, update user's avatarUrl
+    if (docType === "PROFILE_PHOTO") {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { avatarUrl: `/api/avatar/${user.driverId}` },
+      });
+    }
+
     return NextResponse.json({ success: true, document });
   } catch (err: any) {
     console.error("Document upload error:", err);

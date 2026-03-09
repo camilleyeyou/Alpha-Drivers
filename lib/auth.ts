@@ -94,6 +94,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         "/login",
         "/register",
         "/api/auth",
+        "/api/avatar",
         "/api/drivers",
         "/api/payments/webhook",
         "/chauffeur-",
