@@ -448,7 +448,7 @@ export default function DriverRegisterPage() {
             <div className="rounded-xl bg-primary-50 border border-primary-100 p-5 text-sm text-primary-800">
               <p className="font-bold">{t.registerDriver.nextSteps}</p>
               <ol className="mt-2 list-decimal list-inside space-y-1.5">
-                <li>{t.registerDriver.nextStep1.replace("{fee}", (10000).toLocaleString("fr-FR"))}</li>
+                <li>{t.registerDriver.nextStep1.replace("{fee}", (parseInt(process.env.NEXT_PUBLIC_DRIVER_REGISTRATION_FEE || "2000")).toLocaleString("fr-FR"))}</li>
                 <li>{t.registerDriver.nextStep2}</li>
                 <li>{t.registerDriver.nextStep3}</li>
               </ol>

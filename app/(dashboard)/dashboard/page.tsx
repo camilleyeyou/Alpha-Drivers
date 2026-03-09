@@ -257,41 +257,56 @@ export default async function DashboardPage({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {bookings.map((booking) => (
-                      <div
-                        key={booking.id}
-                        className="flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm"
-                      >
-                        <div>
-                          <p className="font-display font-bold text-gray-900">
-                            {isDriver
-                              ? `${booking.client.firstName} ${booking.client.lastName}`
-                              : `${booking.driver.user.firstName} ${booking.driver.user.lastName}`}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
-                            <MapPin className="h-4 w-4 text-primary-500" />
-                            {booking.pickupLocation}
+                    {bookings.map((booking) => {
+                      const bookingStatusColors: Record<string, string> = {
+                        PENDING: "bg-amber-100 text-amber-800",
+                        PAID: "bg-blue-100 text-blue-800",
+                        CONFIRMED: "bg-indigo-100 text-indigo-800",
+                        IN_PROGRESS: "bg-primary-100 text-primary-800",
+                        COMPLETED: "bg-green-100 text-green-800",
+                        RELEASED: "bg-green-100 text-green-800",
+                        DISPUTED: "bg-red-100 text-red-800",
+                        CANCELLED: "bg-gray-100 text-gray-600",
+                        REFUNDED: "bg-gray-100 text-gray-600",
+                      };
+                      const statusColor = bookingStatusColors[booking.status] || "bg-gray-100 text-gray-800";
+                      const statusText = (t.bookingDetail.status as Record<string, string>)[booking.status] || booking.status;
+                      return (
+                        <Link
+                          key={booking.id}
+                          href={`/dashboard/bookings/${booking.id}`}
+                          className="flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm cursor-pointer"
+                        >
+                          <div>
+                            <p className="font-display font-bold text-gray-900">
+                              {isDriver
+                                ? `${booking.client.firstName} ${booking.client.lastName}`
+                                : `${booking.driver.user.firstName} ${booking.driver.user.lastName}`}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
+                              <MapPin className="h-4 w-4 text-primary-500" />
+                              {booking.pickupLocation}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(booking.startDate).toLocaleDateString(
+                                "fr-FR"
+                              )}{" "}
+                              - {booking.hoursBooked}h
+                            </p>
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {new Date(booking.startDate).toLocaleDateString(
-                              "fr-FR"
-                            )}{" "}
-                            - {booking.hoursBooked}h
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-display font-bold text-gray-900">
-                            {booking.totalAmount.toLocaleString("fr-FR")} FCFA
-                          </p>
-                          <Badge
-                            variant="secondary"
-                            className="mt-1 text-xs"
-                          >
-                            {booking.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
+                          <div className="text-right">
+                            <p className="font-display font-bold text-gray-900">
+                              {booking.totalAmount.toLocaleString("fr-FR")} FCFA
+                            </p>
+                            <Badge
+                              className={`mt-1 text-xs ${statusColor}`}
+                            >
+                              {statusText}
+                            </Badge>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
