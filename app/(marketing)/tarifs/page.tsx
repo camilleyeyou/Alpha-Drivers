@@ -35,6 +35,7 @@ export default async function TarifsPage() {
       description: t.tarifs.commissionDesc,
       range: t.tarifs.commissionPercent,
       detail: t.tarifs.commissionNote,
+      popular: true,
     },
     {
       title: t.tarifs.registrationFee,
@@ -48,12 +49,14 @@ export default async function TarifsPage() {
     {
       name: t.tarifs.mtnMomo,
       description: t.tarifs.mtnDesc,
-      color: "bg-yellow-100 text-yellow-800",
+      color: "bg-accent-500",
+      textColor: "text-dark-900",
     },
     {
       name: t.tarifs.orangeMoney,
       description: t.tarifs.orangeDesc,
-      color: "bg-orange-100 text-orange-800",
+      color: "bg-orange-500",
+      textColor: "text-white",
     },
   ];
 
@@ -76,30 +79,42 @@ export default async function TarifsPage() {
     <>
       <Navbar />
       <main id="main" className="min-h-screen">
-        {/* Hero */}
-        <section className="bg-white border-b">
-          <div className="container-app py-16 text-center">
-            <h1 className="heading-1">{t.tarifs.title}</h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+        {/* Hero — Dark */}
+        <section className="bg-dark-900 relative overflow-hidden">
+          <div className="absolute top-[-30%] right-[-10%] h-[400px] w-[400px] rounded-full bg-primary-500/15 blur-[100px]" />
+          <div className="container-app py-20 text-center relative z-10">
+            <h1 className="font-display text-5xl font-extrabold text-white sm:text-6xl">{t.tarifs.title}</h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">
               {t.tarifs.subtitle}
             </p>
           </div>
+          <div className="h-16 bg-white" style={{ clipPath: "polygon(0 60%, 100% 0%, 100% 100%, 0% 100%)" }} />
         </section>
 
         {/* Pricing Cards */}
-        <section className="section-padding">
+        <section className="section-padding bg-white">
           <div className="container-app">
             <div className="grid gap-8 md:grid-cols-3">
               {pricingInfo.map((item) => (
-                <Card key={item.title} className="text-center transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-primary-200">
+                <Card
+                  key={item.title}
+                  className={`text-center relative ${
+                    (item as any).popular ? "border-2 border-primary-500 shadow-glow-green" : ""
+                  }`}
+                >
+                  {(item as any).popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary-500 px-4 py-1 text-xs font-bold text-white">
+                      Standard
+                    </div>
+                  )}
                   <CardHeader>
-                    <CardTitle className="text-lg">{item.title}</CardTitle>
+                    <CardTitle className="font-display text-lg">{item.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-3xl font-bold text-primary-600">
+                    <p className="font-display text-4xl font-black text-primary-600">
                       {item.range}
                     </p>
-                    <p className="mt-2 text-sm text-gray-600">
+                    <p className="mt-3 text-sm text-gray-600">
                       {item.description}
                     </p>
                     <p className="mt-4 text-xs text-gray-500">{item.detail}</p>
@@ -114,13 +129,13 @@ export default async function TarifsPage() {
         <section className="bg-gray-50 section-padding">
           <div className="container-app">
             <h2 className="heading-2 text-center">{t.tarifs.howItWorks}</h2>
-            <div className="mt-12 grid gap-8 md:grid-cols-4">
+            <div className="mt-14 grid gap-8 md:grid-cols-4">
               {stepsData.map((step) => (
-                <div key={step.title} className="text-center">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary-100">
-                    <step.icon className="h-7 w-7 text-primary-600" />
+                <div key={step.title} className="text-center group">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50 transition-all duration-300 group-hover:bg-primary-500 group-hover:shadow-glow-green">
+                    <step.icon className="h-8 w-8 text-primary-600 transition-colors duration-300 group-hover:text-white" />
                   </div>
-                  <h3 className="mt-4 font-semibold text-gray-900">
+                  <h3 className="mt-5 font-display font-bold text-gray-900">
                     {step.title}
                   </h3>
                   <p className="mt-2 text-sm text-gray-600">{step.desc}</p>
@@ -131,23 +146,23 @@ export default async function TarifsPage() {
         </section>
 
         {/* Payment Methods */}
-        <section className="section-padding">
+        <section className="section-padding bg-white">
           <div className="container-app">
             <h2 className="heading-2 text-center">{t.tarifs.paymentMethods}</h2>
             <p className="mx-auto mt-4 max-w-xl text-center text-gray-600">
               {t.tarifs.paymentMethodsDesc}
             </p>
-            <div className="mt-8 grid gap-6 md:grid-cols-2 max-w-2xl mx-auto">
+            <div className="mt-10 grid gap-6 md:grid-cols-2 max-w-2xl mx-auto">
               {paymentMethods.map((method) => (
                 <Card key={method.name}>
                   <CardContent className="flex items-center gap-4 p-6">
                     <div
-                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${method.color}`}
+                      className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${method.color} ${method.textColor}`}
                     >
-                      <CreditCard className="h-6 w-6" />
+                      <CreditCard className="h-7 w-7" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-display font-bold text-gray-900">
                         {method.name}
                       </h3>
                       <p className="text-sm text-gray-600">
@@ -165,8 +180,8 @@ export default async function TarifsPage() {
         <section className="bg-gray-50 section-padding">
           <div className="container-app max-w-2xl">
             <h2 className="heading-2 text-center">{t.tarifs.example}</h2>
-            <Card className="mt-8">
-              <CardContent className="p-6 space-y-4">
+            <Card className="mt-10">
+              <CardContent className="p-8 space-y-4">
                 <div className="flex justify-between text-gray-700">
                   <span>{t.tarifs.exampleRate}</span>
                   <span className="font-medium">{t.tarifs.exampleRateValue}</span>
@@ -185,9 +200,9 @@ export default async function TarifsPage() {
                   <span className="font-medium">{t.tarifs.exampleCommissionValue}</span>
                 </div>
                 <hr />
-                <div className="flex justify-between text-lg font-bold text-gray-900 rounded-lg bg-primary-50 p-3 -mx-1">
+                <div className="flex justify-between text-lg font-bold text-gray-900 rounded-2xl bg-primary-50 p-4 -mx-2">
                   <span>{t.tarifs.exampleTotal}</span>
-                  <span className="text-primary-600">{t.tarifs.exampleTotalValue}</span>
+                  <span className="font-display text-primary-600">{t.tarifs.exampleTotalValue}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>{t.tarifs.exampleDriverReceives}</span>
@@ -199,20 +214,20 @@ export default async function TarifsPage() {
         </section>
 
         {/* FAQ */}
-        <section className="section-padding">
+        <section className="section-padding bg-white">
           <div className="container-app max-w-3xl">
             <h2 className="heading-2 text-center">
-              <HelpCircle className="inline-block mr-2 h-8 w-8" />
+              <HelpCircle className="inline-block mr-2 h-8 w-8 text-primary-500" />
               {t.tarifs.faqTitle}
             </h2>
-            <div className="mt-8 space-y-4">
+            <div className="mt-10 space-y-4">
               {faqs.map((faq) => (
-                <Card key={faq.question} className="transition-all duration-200 hover:shadow-md">
+                <Card key={faq.question}>
                   <CardContent className="p-6">
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-display font-bold text-gray-900">
                       {faq.question}
                     </h3>
-                    <p className="mt-2 text-gray-600">{faq.answer}</p>
+                    <p className="mt-2 text-gray-600 leading-relaxed">{faq.answer}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -221,21 +236,18 @@ export default async function TarifsPage() {
         </section>
 
         {/* CTA */}
-        <section className="bg-primary-600 text-white section-padding">
-          <div className="container-app text-center">
-            <h2 className="text-3xl font-bold">
+        <section className="bg-dark-900 text-white section-padding relative overflow-hidden">
+          <div className="absolute top-[-30%] left-[-10%] h-[400px] w-[400px] rounded-full bg-primary-500/15 blur-[100px]" />
+          <div className="container-app text-center relative z-10">
+            <h2 className="font-display text-3xl font-extrabold sm:text-4xl">
               {t.tarifs.ctaTitle}
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-primary-100">
+            <p className="mx-auto mt-4 max-w-xl text-gray-400">
               {t.tarifs.ctaSubtitle}
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/register">
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  className="bg-white text-primary-600 hover:bg-gray-100"
-                >
+                <Button size="lg" variant="accent" className="text-base px-8 py-4 h-auto">
                   <CheckCircle className="mr-2 h-5 w-5" />
                   {t.common.createFreeAccount}
                 </Button>
@@ -244,7 +256,7 @@ export default async function TarifsPage() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white text-white hover:bg-white/10"
+                  className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/60 text-base px-8 py-4 h-auto"
                 >
                   {t.common.seeDrivers}
                 </Button>

@@ -6,11 +6,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { Car, Phone, Lock, Eye, EyeOff } from "lucide-react";
+import { Car, Phone, Lock, Eye, EyeOff, Shield, Star, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { loginSchema, LoginInput } from "@/lib/validators";
 import { useTranslation } from "@/lib/i18n/context";
 
@@ -55,28 +54,75 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12">
-      {/* Logo */}
-      <Link href="/" className="mb-8 flex items-center gap-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
-          <Car className="h-6 w-6 text-white" />
-        </div>
-        <span className="text-xl font-bold text-gray-900">
-          Alpha<span className="text-primary-600">Drivers</span>
-        </span>
-      </Link>
+    <div className="min-h-screen flex">
+      {/* Dark branding panel */}
+      <div className="hidden lg:flex lg:w-1/2 bg-dark-900 relative overflow-hidden flex-col justify-between p-12">
+        {/* Decorative blobs */}
+        <div className="absolute top-[-20%] left-[-10%] h-[400px] w-[400px] rounded-full bg-primary-500/20 blur-[100px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] h-[300px] w-[300px] rounded-full bg-accent-500/15 blur-[80px]" />
 
-      <Card className="w-full max-w-md animate-fade-in-up">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">{t.login.title}</CardTitle>
-          <CardDescription>
-            {t.login.subtitle}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="relative z-10">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500 shadow-glow-green">
+              <Car className="h-6 w-6 text-white" />
+            </div>
+            <span className="font-display text-xl font-bold text-white">
+              Alpha<span className="text-primary-400">Drivers</span>
+            </span>
+          </Link>
+        </div>
+
+        <div className="relative z-10 space-y-8">
+          <h2 className="font-display text-4xl font-extrabold text-white leading-tight">
+            {t.hero.title}
+          </h2>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-gray-300">
+              <Shield className="h-5 w-5 text-primary-400 shrink-0" />
+              <span>{t.hero.stat3}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-300">
+              <Star className="h-5 w-5 text-accent-400 shrink-0" />
+              <span>{t.hero.stat2}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-300">
+              <CheckCircle className="h-5 w-5 text-primary-400 shrink-0" />
+              <span>{t.hero.stat1}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex gap-2">
+          <div className="rounded-lg bg-accent-500 px-3 py-1.5 text-xs font-bold text-dark-900">
+            MTN MoMo
+          </div>
+          <div className="rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-bold text-white">
+            Orange Money
+          </div>
+        </div>
+      </div>
+
+      {/* Form panel */}
+      <div className="flex-1 flex flex-col items-center justify-center bg-white px-4 py-12">
+        {/* Mobile logo */}
+        <Link href="/" className="mb-8 flex items-center gap-2.5 lg:hidden">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500">
+            <Car className="h-6 w-6 text-white" />
+          </div>
+          <span className="font-display text-xl font-bold text-gray-900">
+            Alpha<span className="text-primary-500">Drivers</span>
+          </span>
+        </Link>
+
+        <div className="w-full max-w-md animate-fade-in-up">
+          <div className="text-center mb-8">
+            <h1 className="font-display text-3xl font-extrabold text-gray-900">{t.login.title}</h1>
+            <p className="mt-2 text-gray-500">{t.login.subtitle}</p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 animate-fade-in" role="alert">
+              <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-sm text-red-600 animate-fade-in" role="alert">
                 {error}
               </div>
             )}
@@ -131,34 +177,21 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm">
+          <div className="mt-8 text-center text-sm">
             <span className="text-gray-600">{t.login.noAccount}</span>{" "}
-            <Link href="/register" className="font-medium text-primary-600 hover:underline">
+            <Link href="/register" className="font-semibold text-primary-600 hover:underline">
               {t.login.createAccount}
             </Link>
           </div>
 
-          <div className="mt-4 text-center">
+          <div className="mt-3 text-center">
             <Link
               href="/register/driver"
-              className="text-sm text-gray-600 hover:text-primary-600"
+              className="text-sm text-gray-500 hover:text-primary-600"
             >
               {t.login.driverLink}
             </Link>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Payment methods */}
-      <div className="mt-8 flex items-center gap-4 text-sm text-gray-500">
-        <span>{t.login.securePayments}</span>
-        <div className="flex gap-2">
-          <span className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black">
-            MTN MoMo
-          </span>
-          <span className="rounded bg-orange-500 px-2 py-1 text-xs font-bold text-white">
-            Orange Money
-          </span>
         </div>
       </div>
     </div>

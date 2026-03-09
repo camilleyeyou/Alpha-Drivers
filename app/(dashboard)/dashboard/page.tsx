@@ -67,7 +67,7 @@ export default async function DashboardPage() {
   > = {
     PENDING_PAYMENT: {
       label: t.dashboard.statusPending,
-      color: "bg-yellow-100 text-yellow-800",
+      color: "bg-accent-100 text-accent-800",
       icon: CreditCard,
     },
     PENDING_VERIFICATION: {
@@ -77,7 +77,7 @@ export default async function DashboardPage() {
     },
     VERIFIED: {
       label: t.dashboard.statusVerified,
-      color: "bg-green-100 text-green-800",
+      color: "bg-primary-100 text-primary-800",
       icon: CheckCircle,
     },
     SUSPENDED: {
@@ -98,23 +98,23 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
+      {/* Header — Dark */}
+      <header className="bg-dark-900 border-b border-white/10">
         <div className="container-app flex items-center justify-between py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500 shadow-glow-green">
               <Car className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">
-              Alpha<span className="text-primary-600">Drivers</span>
+            <span className="font-display text-xl font-bold text-white">
+              Alpha<span className="text-primary-400">Drivers</span>
             </span>
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-300">
               {user.firstName} {user.lastName}
             </span>
             <Link href="/">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10">
                 <LogOut className="mr-2 h-4 w-4" />
                 {t.common.back}
               </Button>
@@ -123,29 +123,29 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <main className="container-app py-8">
+      <main className="container-app py-10">
         {/* Welcome */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">
+        <div className="mb-10">
+          <h1 className="font-display text-3xl font-extrabold text-gray-900">
             {t.dashboard.welcome.replace("{name}", user.firstName || "Utilisateur")}
           </h1>
-          <p className="mt-1 text-gray-600">
+          <p className="mt-2 text-gray-600">
             {isDriver ? t.dashboard.subtitleDriver : t.dashboard.subtitleClient}
           </p>
         </div>
 
         {/* Driver Status Banner */}
         {isDriver && driver && driverStatus && (
-          <Card className={`mb-8 ${driver.status === "PENDING_PAYMENT" || driver.status === "PENDING_VERIFICATION" ? "border-l-4 border-l-primary-500" : ""}`}>
+          <Card className={`mb-10 border-0 ${driver.status === "PENDING_PAYMENT" || driver.status === "PENDING_VERIFICATION" ? "border-l-4 border-l-primary-500" : ""}`}>
             <CardContent className="flex items-center justify-between p-6">
               <div className="flex items-center gap-4">
                 <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-lg ${driverStatus.color}`}
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl ${driverStatus.color}`}
                 >
-                  <driverStatus.icon className="h-6 w-6" />
+                  <driverStatus.icon className="h-7 w-7" />
                 </div>
                 <div>
-                  <h2 className="font-semibold text-gray-900">
+                  <h2 className="font-display font-bold text-gray-900">
                     Statut: {driverStatus.label}
                   </h2>
                   {driver.status === "PENDING_PAYMENT" && (
@@ -171,7 +171,7 @@ export default async function DashboardPage() {
                 </div>
               </div>
               {driver.status === "PENDING_PAYMENT" && (
-                <Button>{t.dashboard.payNow}</Button>
+                <Button variant="accent">{t.dashboard.payNow}</Button>
               )}
             </CardContent>
           </Card>
@@ -183,28 +183,34 @@ export default async function DashboardPage() {
             {/* Stats */}
             {isDriver && driver && (
               <div className="grid gap-4 sm:grid-cols-3">
-                <Card className="transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                <Card className="border-0">
                   <CardContent className="p-6 text-center">
-                    <Calendar className="mx-auto h-8 w-8 text-primary-600" />
-                    <p className="mt-2 text-2xl font-bold">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50">
+                      <Calendar className="h-7 w-7 text-primary-600" />
+                    </div>
+                    <p className="mt-3 font-display text-3xl font-black text-gray-900">
                       {driver.totalTrips}
                     </p>
                     <p className="text-sm text-gray-600">{t.dashboard.statTrips}</p>
                   </CardContent>
                 </Card>
-                <Card className="transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                <Card className="border-0">
                   <CardContent className="p-6 text-center">
-                    <Star className="mx-auto h-8 w-8 text-amber-500" />
-                    <p className="mt-2 text-2xl font-bold">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-50">
+                      <Star className="h-7 w-7 text-accent-600" />
+                    </div>
+                    <p className="mt-3 font-display text-3xl font-black text-gray-900">
                       {Number(driver.avgRating).toFixed(1)}
                     </p>
                     <p className="text-sm text-gray-600">{t.dashboard.statRating}</p>
                   </CardContent>
                 </Card>
-                <Card className="transition-all duration-200 hover:-translate-y-1 hover:shadow-md">
+                <Card className="border-0">
                   <CardContent className="p-6 text-center">
-                    <CreditCard className="mx-auto h-8 w-8 text-green-600" />
-                    <p className="mt-2 text-2xl font-bold">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50">
+                      <CreditCard className="h-7 w-7 text-green-600" />
+                    </div>
+                    <p className="mt-3 font-display text-3xl font-black text-gray-900">
                       {driver.totalEarnings.toLocaleString("fr-FR")}
                     </p>
                     <p className="text-sm text-gray-600">{t.dashboard.statEarnings}</p>
@@ -214,18 +220,18 @@ export default async function DashboardPage() {
             )}
 
             {/* Recent Bookings */}
-            <Card>
+            <Card className="border-0">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 font-display">
+                  <Calendar className="h-5 w-5 text-primary-500" />
                   {isDriver ? t.dashboard.recentBookings : t.dashboard.myBookings}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {bookings.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-300" />
-                    <p className="mt-4">{t.dashboard.noBookings}</p>
+                  <div className="text-center py-12 text-gray-500">
+                    <Calendar className="mx-auto h-14 w-14 text-gray-300" />
+                    <p className="mt-4 font-display font-bold text-gray-600">{t.dashboard.noBookings}</p>
                     {!isDriver && (
                       <Link href="/drivers/douala" className="mt-4 inline-block">
                         <Button variant="outline" size="sm">
@@ -235,20 +241,20 @@ export default async function DashboardPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {bookings.map((booking) => (
                       <div
                         key={booking.id}
-                        className="flex items-center justify-between rounded-lg border p-4 transition-colors duration-150 hover:bg-gray-50"
+                        className="flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm"
                       >
                         <div>
-                          <p className="font-medium text-gray-900">
+                          <p className="font-display font-bold text-gray-900">
                             {isDriver
                               ? `${booking.client.firstName} ${booking.client.lastName}`
                               : `${booking.driver.user.firstName} ${booking.driver.user.lastName}`}
                           </p>
                           <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
-                            <MapPin className="h-4 w-4" />
+                            <MapPin className="h-4 w-4 text-primary-500" />
                             {booking.pickupLocation}
                           </div>
                           <p className="text-xs text-gray-500 mt-1">
@@ -259,7 +265,7 @@ export default async function DashboardPage() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900">
+                          <p className="font-display font-bold text-gray-900">
                             {booking.totalAmount.toLocaleString("fr-FR")} FCFA
                           </p>
                           <Badge
@@ -280,10 +286,10 @@ export default async function DashboardPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Profile Card */}
-            <Card>
+            <Card className="border-0">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <User className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 text-base font-display">
+                  <User className="h-5 w-5 text-primary-500" />
                   {t.dashboard.myProfile}
                 </CardTitle>
               </CardHeader>
@@ -313,15 +319,15 @@ export default async function DashboardPage() {
 
             {/* Driver Quick Actions */}
             {isDriver && driver && (
-              <Card>
+              <Card className="border-0">
                 <CardHeader>
-                  <CardTitle className="text-base">{t.dashboard.quickActions}</CardTitle>
+                  <CardTitle className="text-base font-display">{t.dashboard.quickActions}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {driver.status === "PENDING_PAYMENT" && (
                     <Button className="w-full justify-between" variant="outline">
                       <span className="flex items-center gap-2">
-                        <CreditCard className="h-4 w-4" />
+                        <CreditCard className="h-4 w-4 text-primary-500" />
                         {t.dashboard.payRegistration}
                       </span>
                       <ChevronRight className="h-4 w-4" />
@@ -330,7 +336,7 @@ export default async function DashboardPage() {
                   {driver.status === "PENDING_VERIFICATION" && (
                     <Button className="w-full justify-between" variant="outline">
                       <span className="flex items-center gap-2">
-                        <Upload className="h-4 w-4" />
+                        <Upload className="h-4 w-4 text-primary-500" />
                         {t.dashboard.myDocuments}
                       </span>
                       <ChevronRight className="h-4 w-4" />
@@ -338,7 +344,7 @@ export default async function DashboardPage() {
                   )}
                   <Button className="w-full justify-between" variant="outline">
                     <span className="flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
+                      <FileText className="h-4 w-4 text-primary-500" />
                       {t.dashboard.editProfile}
                     </span>
                     <ChevronRight className="h-4 w-4" />
@@ -349,9 +355,9 @@ export default async function DashboardPage() {
 
             {/* Client Quick Actions */}
             {!isDriver && (
-              <Card>
+              <Card className="border-0">
                 <CardHeader>
-                  <CardTitle className="text-base">{t.dashboard.quickActions}</CardTitle>
+                  <CardTitle className="text-base font-display">{t.dashboard.quickActions}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <Link href="/drivers/douala">
@@ -360,7 +366,7 @@ export default async function DashboardPage() {
                       variant="outline"
                     >
                       <span className="flex items-center gap-2">
-                        <Car className="h-4 w-4" />
+                        <Car className="h-4 w-4 text-primary-500" />
                         {t.dashboard.findDriver}
                       </span>
                       <ChevronRight className="h-4 w-4" />
@@ -372,7 +378,7 @@ export default async function DashboardPage() {
                       variant="outline"
                     >
                       <span className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
+                        <User className="h-4 w-4 text-primary-500" />
                         {t.dashboard.becomeDriver}
                       </span>
                       <ChevronRight className="h-4 w-4" />

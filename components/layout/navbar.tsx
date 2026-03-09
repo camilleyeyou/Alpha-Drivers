@@ -26,15 +26,15 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <header className="sticky top-0 z-50 w-full bg-dark-900/95 backdrop-blur-xl border-b border-white/10">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 transition-transform duration-150 hover:scale-105">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
+        <Link href="/" className="flex items-center gap-2.5 transition-transform duration-200 hover:scale-105">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500 shadow-glow-green">
             <Car className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-bold text-gray-900">
-            Alpha<span className="text-primary-600">Drivers</span>
+          <span className="font-display text-xl font-bold text-white">
+            Alpha<span className="text-primary-400">Drivers</span>
           </span>
         </Link>
 
@@ -45,9 +45,9 @@ export function Navbar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "relative text-sm font-medium transition-colors hover:text-primary-600 py-1",
-                pathname === item.href ? "text-primary-600" : "text-gray-600",
-                "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-200",
+                "relative text-sm font-medium transition-colors py-1",
+                pathname === item.href ? "text-primary-400" : "text-gray-300 hover:text-white",
+                "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:rounded-full after:bg-primary-400 after:transition-all after:duration-300",
                 pathname === item.href ? "after:w-full" : "after:w-0 hover:after:w-full"
               )}
             >
@@ -62,7 +62,7 @@ export function Navbar() {
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
               <Link href="/dashboard">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10">
                   <User className="mr-2 h-4 w-4" />
                   {user?.firstName || t.nav.myAccount}
                 </Button>
@@ -70,6 +70,7 @@ export function Navbar() {
               <Button
                 variant="outline"
                 size="sm"
+                className="border-white/20 text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/40"
                 onClick={() => signOut({ callbackUrl: "/" })}
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -79,7 +80,7 @@ export function Navbar() {
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/10">
                   {t.nav.login}
                 </Button>
               </Link>
@@ -95,7 +96,7 @@ export function Navbar() {
           <LanguageToggle />
           <button
             type="button"
-            className="rounded-lg p-2 text-gray-600 hover:bg-gray-100"
+            className="rounded-lg p-2 text-gray-300 hover:bg-white/10"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -106,7 +107,7 @@ export function Navbar() {
       {/* Mobile menu */}
       <div
         className={cn(
-          "md:hidden border-t bg-white overflow-hidden transition-all duration-300 ease-in-out",
+          "md:hidden border-t border-white/10 bg-dark-900 overflow-hidden transition-all duration-300 ease-spring",
           mobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0 border-t-0"
         )}
       >
@@ -116,28 +117,28 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "block rounded-lg px-4 py-3 text-base font-medium transition-colors",
+                  "block rounded-xl px-4 py-3 text-base font-medium transition-colors",
                   pathname === item.href
-                    ? "bg-primary-50 text-primary-600"
-                    : "text-gray-600 hover:bg-gray-50"
+                    ? "bg-primary-500/10 text-primary-400"
+                    : "text-gray-300 hover:bg-white/5 hover:text-white"
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            <hr className="my-4" />
+            <hr className="my-4 border-white/10" />
             {isLoggedIn ? (
               <>
                 <Link
                   href="/dashboard"
-                  className="block rounded-lg px-4 py-3 text-base font-medium text-gray-600 hover:bg-gray-50"
+                  className="block rounded-xl px-4 py-3 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t.nav.myAccount}
                 </Link>
                 <button
-                  className="w-full rounded-lg px-4 py-3 text-left text-base font-medium text-red-600 hover:bg-red-50"
+                  className="w-full rounded-xl px-4 py-3 text-left text-base font-medium text-red-400 hover:bg-red-500/10"
                   onClick={() => signOut({ callbackUrl: "/" })}
                 >
                   {t.nav.logout}
@@ -146,7 +147,7 @@ export function Navbar() {
             ) : (
               <div className="flex gap-4 px-4 pt-2">
                 <Link href="/login" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">
                     {t.nav.login}
                   </Button>
                 </Link>

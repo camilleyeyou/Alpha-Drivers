@@ -27,33 +27,33 @@ export async function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="bg-dark-950 text-gray-400">
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500 shadow-glow-green">
                 <Car className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">
+              <span className="font-display text-xl font-bold text-white">
                 Alpha<span className="text-primary-400">Drivers</span>
               </span>
             </Link>
-            <p className="mt-4 text-sm">
+            <p className="mt-4 text-sm leading-relaxed">
               {t.footer.description}
             </p>
             <div className="mt-6 space-y-3">
-              <a href="tel:+237600000000" className="flex items-center gap-2 text-sm hover:text-white">
-                <Phone className="h-4 w-4" />
+              <a href="tel:+237600000000" className="flex items-center gap-2 text-sm hover:text-primary-400 transition-colors">
+                <Phone className="h-4 w-4 text-primary-500" />
                 {t.footer.phone}
               </a>
-              <a href="mailto:contact@alpha-drivers.cm" className="flex items-center gap-2 text-sm hover:text-white">
-                <Mail className="h-4 w-4" />
+              <a href="mailto:contact@alpha-drivers.cm" className="flex items-center gap-2 text-sm hover:text-primary-400 transition-colors">
+                <Mail className="h-4 w-4 text-primary-500" />
                 {t.footer.email}
               </a>
               <div className="flex items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4" />
+                <MapPin className="h-4 w-4 text-primary-500" />
                 {t.footer.location}
               </div>
             </div>
@@ -61,13 +61,13 @@ export async function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="font-display text-sm font-bold uppercase tracking-wider text-white">
               {t.footer.services}
             </h3>
             <ul className="mt-4 space-y-3">
               {serviceLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm hover:text-white hover:underline underline-offset-4 transition-colors">
+                  <Link href={link.href} className="text-sm hover:text-primary-400 transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -77,13 +77,13 @@ export async function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="font-display text-sm font-bold uppercase tracking-wider text-white">
               {t.footer.company}
             </h3>
             <ul className="mt-4 space-y-3">
               {companyLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm hover:text-white hover:underline underline-offset-4 transition-colors">
+                  <Link href={link.href} className="text-sm hover:text-primary-400 transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -93,13 +93,13 @@ export async function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+            <h3 className="font-display text-sm font-bold uppercase tracking-wider text-white">
               {t.footer.info}
             </h3>
             <ul className="mt-4 space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm hover:text-white hover:underline underline-offset-4 transition-colors">
+                  <Link href={link.href} className="text-sm hover:text-primary-400 transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -109,10 +109,10 @@ export async function Footer() {
             <div className="mt-6">
               <p className="text-xs text-gray-500 mb-2">{t.footer.paymentsAccepted}</p>
               <div className="flex gap-2">
-                <div className="rounded bg-yellow-500 px-2 py-1 text-xs font-bold text-black transition-transform duration-150 hover:scale-105">
+                <div className="rounded-lg bg-accent-500 px-3 py-1.5 text-xs font-bold text-dark-900 transition-transform duration-150 hover:scale-105">
                   {t.footer.mtnMomo}
                 </div>
-                <div className="rounded bg-orange-500 px-2 py-1 text-xs font-bold text-white transition-transform duration-150 hover:scale-105">
+                <div className="rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-bold text-white transition-transform duration-150 hover:scale-105">
                   {t.footer.orangeMoney}
                 </div>
               </div>
@@ -120,8 +120,8 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-gray-800 pt-8">
-          <p className="text-center text-sm">
+        <div className="mt-16 border-t border-white/10 pt-8">
+          <p className="text-center text-sm text-gray-500">
             {t.footer.copyright.replace("{year}", new Date().getFullYear().toString())}
           </p>
         </div>

@@ -77,19 +77,21 @@ export default async function DriversListPage({
     <>
       <Navbar />
       <main className="min-h-screen bg-gray-50">
-        <section className="bg-white border-b">
-          <div className="container-app py-8">
-            <div className="flex items-center gap-2 text-gray-600 text-sm">
-              <Link href="/" className="hover:text-primary-600">
+        {/* Header — Dark */}
+        <section className="bg-dark-900 relative overflow-hidden">
+          <div className="absolute top-[-20%] right-[-10%] h-[300px] w-[300px] rounded-full bg-primary-500/15 blur-[80px]" />
+          <div className="container-app py-10 relative z-10">
+            <div className="flex items-center gap-2 text-gray-400 text-sm">
+              <Link href="/" className="hover:text-primary-400 transition-colors">
                 {t.driversList.breadcrumbHome}
               </Link>
               <span>/</span>
-              <span>{t.driversList.title.replace("{city}", cityName)}</span>
+              <span className="text-gray-300">{t.driversList.title.replace("{city}", cityName)}</span>
             </div>
-            <h1 className="mt-4 text-3xl font-bold text-gray-900">
+            <h1 className="mt-4 font-display text-3xl font-extrabold text-white sm:text-4xl">
               {t.driversList.subtitle.replace("{city}", cityName)}
             </h1>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-gray-400">
               {t.driversList.count.replace("{count}", String(drivers.length))}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
@@ -98,7 +100,9 @@ export default async function DriversListPage({
                   <Button
                     variant={city === key ? "default" : "outline"}
                     size="sm"
-                    className="gap-1"
+                    className={`gap-1 ${
+                      city !== key ? "border-white/20 text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/40" : ""
+                    }`}
                   >
                     <MapPin className="h-4 w-4" />
                     {c.name}
@@ -107,13 +111,15 @@ export default async function DriversListPage({
               ))}
             </div>
           </div>
+          <div className="h-12 bg-gray-50" style={{ clipPath: "polygon(0 60%, 100% 0%, 100% 100%, 0% 100%)" }} />
         </section>
+
         <section className="container-app py-8">
           <div className="flex flex-col gap-6 lg:flex-row">
             <aside className="w-full lg:w-64 shrink-0">
-              <div className="rounded-xl bg-white p-6 shadow-sm">
-                <h2 className="font-semibold text-gray-900 flex items-center gap-2">
-                  <SlidersHorizontal className="h-5 w-5" />
+              <div className="rounded-2xl bg-white p-6 shadow-card-lift">
+                <h2 className="font-display font-bold text-gray-900 flex items-center gap-2">
+                  <SlidersHorizontal className="h-5 w-5 text-primary-500" />
                   {t.driversList.filters}
                 </h2>
                 <div className="mt-6 space-y-6">
@@ -148,7 +154,7 @@ export default async function DriversListPage({
                         <label key={lang} className="flex items-center gap-2">
                           <input
                             type="checkbox"
-                            className="rounded border-gray-300"
+                            className="rounded border-gray-300 text-primary-500 focus:ring-primary-500"
                           />
                           <span className="text-sm text-gray-600">{lang}</span>
                         </label>
@@ -168,7 +174,7 @@ export default async function DriversListPage({
                           <input
                             type="radio"
                             name="rating"
-                            className="border-gray-300"
+                            className="border-gray-300 text-primary-500 focus:ring-primary-500"
                           />
                           <span className="text-sm text-gray-600">
                             {rating}+ {t.driversList.stars}
@@ -184,12 +190,12 @@ export default async function DriversListPage({
             <div className="flex-1">
               <div className="flex items-center justify-between mb-6">
                 <p className="text-gray-600">
-                  <span className="font-medium text-gray-900">
+                  <span className="font-bold text-gray-900">
                     {drivers.length}
                   </span>{" "}
                   {t.driversList.found}
                 </p>
-                <select className="rounded-lg border border-gray-200 px-3 py-2 text-sm transition-colors duration-150 hover:border-primary-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none">
+                <select className="rounded-xl border-2 border-gray-200 px-3 py-2 text-sm transition-colors duration-150 hover:border-primary-300 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none">
                   <option>{t.driversList.sortRecommended}</option>
                   <option>{t.driversList.sortPriceAsc}</option>
                   <option>{t.driversList.sortPriceDesc}</option>
@@ -207,10 +213,10 @@ export default async function DriversListPage({
                 ))}
               </div>
               {drivers.length === 0 && (
-                <div className="text-center py-16 text-gray-500">
-                  <MapPin className="mx-auto h-12 w-12 text-gray-300" />
-                  <p className="mt-4 text-lg font-medium text-gray-600">{t.driversList.noDrivers}</p>
-                  <p className="mt-1 text-sm">{t.driversList.noDriversDesc}</p>
+                <div className="text-center py-20 text-gray-500">
+                  <MapPin className="mx-auto h-16 w-16 text-gray-300" />
+                  <p className="mt-4 font-display text-xl font-bold text-gray-600">{t.driversList.noDrivers}</p>
+                  <p className="mt-2 text-sm">{t.driversList.noDriversDesc}</p>
                 </div>
               )}
             </div>

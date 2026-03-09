@@ -161,33 +161,36 @@ export default async function CityLandingPage({ params }: { params: { city: stri
       />
       <Navbar />
       <main>
-        {/* Hero */}
-        <section className="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-          <div className="container-app py-16 sm:py-24">
-            <div className="flex items-center gap-2 text-primary-200">
+        {/* Hero — Dark gradient */}
+        <section className="bg-dark-900 relative overflow-hidden">
+          <div className="absolute top-[-20%] left-[-10%] h-[500px] w-[500px] rounded-full bg-primary-500/20 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] h-[300px] w-[300px] rounded-full bg-accent-500/10 blur-[80px]" />
+          <div className="container-app py-20 sm:py-28 relative z-10">
+            <div className="flex items-center gap-2 text-primary-400">
               <MapPin className="h-5 w-5" />
               <span>{cityName}, Cameroun</span>
             </div>
-            <h1 className="mt-4 text-4xl font-bold sm:text-5xl">{data.titleFr}</h1>
-            <p className="mt-4 max-w-2xl text-lg text-primary-100">{data.descriptionFr}</p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Badge className="bg-white/20 text-white hover:bg-white/30">
-                <Shield className="mr-1 h-4 w-4" />
+            <h1 className="mt-4 font-display text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl">{data.titleFr}</h1>
+            <p className="mt-6 max-w-2xl text-lg text-gray-400">{data.descriptionFr}</p>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Badge className="bg-primary-500/10 text-primary-400 border-primary-500/20 px-4 py-2">
+                <Shield className="mr-1.5 h-4 w-4" />
                 {t.chauffeur.verifiedDrivers}
               </Badge>
-              <Badge className="bg-white/20 text-white hover:bg-white/30">
-                <Star className="mr-1 h-4 w-4" />
+              <Badge className="bg-accent-500/10 text-accent-400 border-accent-500/20 px-4 py-2">
+                <Star className="mr-1.5 h-4 w-4" />
                 {t.chauffeur.avgRating}
               </Badge>
-              <Badge className="bg-white/20 text-white hover:bg-white/30">
+              <Badge className="bg-white/5 text-gray-300 border-white/10 px-4 py-2">
                 {t.chauffeur.driversAvailable.replace("{count}", String(stats.driverCount))}
               </Badge>
             </div>
           </div>
+          <div className="h-16 bg-white" style={{ clipPath: "polygon(0 60%, 100% 0%, 100% 100%, 0% 100%)" }} />
         </section>
 
         {/* Drivers List */}
-        <section className="section-padding">
+        <section className="section-padding bg-white">
           <div className="container-app">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -201,7 +204,7 @@ export default async function CityLandingPage({ params }: { params: { city: stri
                 </Button>
               </Link>
             </div>
-            <div className="mt-8 grid gap-6">
+            <div className="mt-10 grid gap-6">
               {drivers.map((driver) => (
                 <DriverCard key={driver.id} driver={driver} citySlug={params.city} />
               ))}
@@ -212,7 +215,7 @@ export default async function CityLandingPage({ params }: { params: { city: stri
         {/* SEO Content */}
         <section className="bg-gray-50 section-padding">
           <div className="container-app">
-            <div className="prose prose-lg mx-auto max-w-3xl">
+            <div className="prose prose-lg mx-auto max-w-3xl prose-headings:font-display prose-headings:font-extrabold prose-a:text-primary-600">
               <h2>{t.chauffeur.whyChoose.replace("{city}", cityName)}</h2>
               <p>{t.chauffeur.whyChooseDesc.replace(/\{city\}/g, cityName)}</p>
               <h3>{t.chauffeur.serviceTitle.replace("{city}", cityName)}</h3>
@@ -226,18 +229,19 @@ export default async function CityLandingPage({ params }: { params: { city: stri
         </section>
 
         {/* CTA */}
-        <section className="section-padding">
-          <div className="container-app text-center">
-            <h2 className="heading-2">{t.chauffeur.ctaTitle.replace("{city}", cityName)}</h2>
-            <p className="mx-auto mt-4 max-w-xl text-gray-600">
+        <section className="bg-dark-900 text-white section-padding relative overflow-hidden">
+          <div className="absolute top-[-30%] right-[-10%] h-[400px] w-[400px] rounded-full bg-primary-500/15 blur-[100px]" />
+          <div className="container-app text-center relative z-10">
+            <h2 className="font-display text-3xl font-extrabold sm:text-4xl">{t.chauffeur.ctaTitle.replace("{city}", cityName)}</h2>
+            <p className="mx-auto mt-4 max-w-xl text-gray-400">
               {t.chauffeur.ctaSubtitle}
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link href="/register">
-                <Button size="lg">{t.common.createFreeAccount}</Button>
+                <Button size="lg" variant="accent" className="text-base px-8 py-4 h-auto">{t.common.createFreeAccount}</Button>
               </Link>
               <Link href={`/drivers/${params.city}`}>
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="border-2 border-white/30 text-white hover:bg-white/10 hover:border-white/60 text-base px-8 py-4 h-auto">
                   {t.chauffeur.seeAllDrivers}
                 </Button>
               </Link>

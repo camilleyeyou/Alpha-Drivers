@@ -13,7 +13,7 @@ export function LanguageToggle() {
   return (
     <button
       onClick={toggleLocale}
-      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+      className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
       aria-label={locale === "fr" ? "Switch to English" : "Passer en français"}
       title={locale === "fr" ? "Switch to English" : "Passer en français"}
     >

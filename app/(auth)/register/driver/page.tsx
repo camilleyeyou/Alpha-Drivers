@@ -25,13 +25,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -107,7 +100,6 @@ export default function DriverRegisterPage() {
         return;
       }
 
-      // Auto-sign-in after successful registration
       const signInResult = await signIn("credentials", {
         phone: data.phone,
         password: data.password,
@@ -129,36 +121,39 @@ export default function DriverRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12">
-      {/* Logo */}
-      <Link href="/" className="mb-8 flex items-center gap-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-600">
-          <Car className="h-6 w-6 text-white" />
-        </div>
-        <span className="text-xl font-bold text-gray-900">
-          Alpha<span className="text-primary-600">Drivers</span>
-        </span>
-      </Link>
+    <div className="min-h-screen bg-dark-900">
+      {/* Top bar with logo */}
+      <div className="border-b border-white/10 px-6 py-4">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500 shadow-glow-green">
+            <Car className="h-6 w-6 text-white" />
+          </div>
+          <span className="font-display text-xl font-bold text-white">
+            Alpha<span className="text-primary-400">Drivers</span>
+          </span>
+        </Link>
+      </div>
 
-      <Card className="w-full max-w-2xl animate-fade-in-up">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">{t.registerDriver.title}</CardTitle>
-          <CardDescription>
-            {t.registerDriver.subtitle}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <div className="mx-auto max-w-3xl px-4 py-12">
+        <div className="text-center mb-10">
+          <h1 className="font-display text-3xl font-extrabold text-white sm:text-4xl">{t.registerDriver.title}</h1>
+          <p className="mt-3 text-gray-400 text-lg">{t.registerDriver.subtitle}</p>
+        </div>
+
+        <div className="rounded-2xl bg-white p-8 shadow-card-lift animate-fade-in-up">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 animate-fade-in" role="alert">
+              <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-sm text-red-600 animate-fade-in" role="alert">
                 {error}
               </div>
             )}
 
             {/* Section 1: Personal Info */}
             <div className="space-y-4">
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                <User className="h-5 w-5 text-primary-600" />
+              <h3 className="flex items-center gap-2 font-display text-lg font-bold text-gray-900">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+                  <User className="h-4 w-4 text-primary-600" />
+                </div>
                 {t.registerDriver.personalInfo}
               </h3>
 
@@ -236,8 +231,10 @@ export default function DriverRegisterPage() {
 
             {/* Section 2: Driver Profile */}
             <div className="space-y-4">
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                <Briefcase className="h-5 w-5 text-primary-600" />
+              <h3 className="flex items-center gap-2 font-display text-lg font-bold text-gray-900">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+                  <Briefcase className="h-4 w-4 text-primary-600" />
+                </div>
                 {t.registerDriver.driverProfile}
               </h3>
 
@@ -284,10 +281,10 @@ export default function DriverRegisterPage() {
                   {LANGUAGES_MAP.map((lang) => (
                     <label
                       key={lang.value}
-                      className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                      className={`flex cursor-pointer items-center gap-2 rounded-xl border-2 px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                         selectedLanguages.includes(lang.value)
                           ? "border-primary-500 bg-primary-50 text-primary-700"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200 hover:border-primary-200"
                       }`}
                     >
                       <input
@@ -316,10 +313,10 @@ export default function DriverRegisterPage() {
                   {Object.entries(CITIES).map(([key, city]) => (
                     <label
                       key={key}
-                      className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                      className={`flex cursor-pointer items-center gap-2 rounded-xl border-2 px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                         selectedCities.includes(key)
                           ? "border-primary-500 bg-primary-50 text-primary-700"
-                          : "border-gray-200 hover:border-gray-300"
+                          : "border-gray-200 hover:border-primary-200"
                       }`}
                     >
                       <input
@@ -344,7 +341,7 @@ export default function DriverRegisterPage() {
                   <textarea
                     id="bio"
                     placeholder={t.registerDriver.bioPlaceholder}
-                    className="flex min-h-[100px] w-full rounded-lg border border-input bg-background px-4 py-2 pl-10 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex min-h-[100px] w-full rounded-xl border-2 border-input bg-background px-4 py-2 pl-10 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     maxLength={500}
                     {...register("bio")}
                   />
@@ -357,8 +354,10 @@ export default function DriverRegisterPage() {
 
             {/* Section 3: Mobile Money */}
             <div className="space-y-4">
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                <Wallet className="h-5 w-5 text-primary-600" />
+              <h3 className="flex items-center gap-2 font-display text-lg font-bold text-gray-900">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-50">
+                  <Wallet className="h-4 w-4 text-accent-700" />
+                </div>
                 {t.registerDriver.mobileMoneyPayment}
               </h3>
 
@@ -396,8 +395,10 @@ export default function DriverRegisterPage() {
 
             {/* Section 4: Password */}
             <div className="space-y-4">
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                <Lock className="h-5 w-5 text-primary-600" />
+              <h3 className="flex items-center gap-2 font-display text-lg font-bold text-gray-900">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-50">
+                  <Lock className="h-4 w-4 text-primary-600" />
+                </div>
                 {t.registerDriver.security}
               </h3>
 
@@ -444,9 +445,9 @@ export default function DriverRegisterPage() {
             </div>
 
             {/* Info box */}
-            <div className="rounded-lg bg-blue-50 p-4 text-sm text-blue-700">
-              <p className="font-medium">{t.registerDriver.nextSteps}</p>
-              <ol className="mt-2 list-decimal list-inside space-y-1">
+            <div className="rounded-xl bg-primary-50 border border-primary-100 p-5 text-sm text-primary-800">
+              <p className="font-bold">{t.registerDriver.nextSteps}</p>
+              <ol className="mt-2 list-decimal list-inside space-y-1.5">
                 <li>{t.registerDriver.nextStep1.replace("{fee}", (10000).toLocaleString("fr-FR"))}</li>
                 <li>{t.registerDriver.nextStep2}</li>
                 <li>{t.registerDriver.nextStep3}</li>
@@ -458,26 +459,26 @@ export default function DriverRegisterPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm">
+          <div className="mt-8 text-center text-sm">
             <span className="text-gray-600">{t.registerDriver.hasAccount}</span>{" "}
             <Link
               href="/login"
-              className="font-medium text-primary-600 hover:underline"
+              className="font-semibold text-primary-600 hover:underline"
             >
               {t.registerDriver.loginLink}
             </Link>
           </div>
 
-          <div className="mt-4 text-center">
+          <div className="mt-3 text-center">
             <Link
               href="/register"
-              className="text-sm text-gray-600 hover:text-primary-600"
+              className="text-sm text-gray-500 hover:text-primary-600"
             >
               {t.registerDriver.clientLink}
             </Link>
           </div>
 
-          <p className="mt-4 text-center text-xs text-gray-500">
+          <p className="mt-6 text-center text-xs text-gray-500">
             {t.registerDriver.terms}{" "}
             <Link href="/terms" className="underline">
               {t.registerDriver.termsOfUse}
@@ -488,8 +489,8 @@ export default function DriverRegisterPage() {
             </Link>
             .
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

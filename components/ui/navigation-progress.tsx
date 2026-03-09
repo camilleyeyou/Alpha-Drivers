@@ -80,7 +80,7 @@ function NavigationProgressBar() {
       aria-valuenow={Math.round(progress)}
     >
       <div
-        className="h-full bg-primary-600 transition-all duration-300 ease-out"
+        className="h-full bg-primary-500 transition-all duration-300 ease-out shadow-glow-green"
         style={{
           width: `${progress}%`,
           opacity: progress >= 100 ? 0 : 1,
