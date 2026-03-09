@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getServerDictionary } from "@/lib/i18n";
+import { auth } from "@/lib/auth";
 
 const cities = [
   { name: "Douala", slug: "douala", drivers: 45 },
@@ -28,6 +29,8 @@ const cities = [
 const featureIcons = [Shield, CreditCard, Clock, Users];
 
 export default async function HomePage() {
+  const session = await auth();
+  const isLoggedIn = !!session;
   const t = await getServerDictionary();
 
   const features = [
@@ -189,9 +192,9 @@ export default async function HomePage() {
                   {t.cta.subtitle}
                 </p>
                 <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                  <Link href="/register">
+                  <Link href={isLoggedIn ? "/dashboard" : "/register"}>
                     <Button size="lg" variant="accent" className="text-base px-8 py-4 h-auto">
-                      {t.common.createFreeAccount}
+                      {isLoggedIn ? t.nav.myAccount : t.common.createFreeAccount}
                     </Button>
                   </Link>
                   <Link href="/drivers/douala">

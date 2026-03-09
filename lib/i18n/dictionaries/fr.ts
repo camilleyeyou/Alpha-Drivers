@@ -560,6 +560,48 @@ const fr = {
     reupload: "Re-téléverser",
   },
 
+  // Driver profile page
+  driverProfile: {
+    about: "À propos",
+    reviews: "Avis clients",
+    noReviews: "Aucun avis pour le moment.",
+    quickInfo: "Informations rapides",
+    rate: "Tarif horaire",
+    rating: "Note",
+    completedTrips: "Trajets effectués",
+    memberSince: "Membre depuis",
+  },
+
+  // Booking
+  booking: {
+    title: "Réserver un chauffeur",
+    selectDriverFirst: "Veuillez d'abord choisir un chauffeur depuis la liste.",
+    dateTime: "Date et heure",
+    date: "Date",
+    startTime: "Heure de début",
+    duration: "Durée",
+    hours: "heure(s)",
+    location: "Lieu de prise en charge",
+    pickupCity: "Ville",
+    selectCity: "Sélectionnez une ville",
+    pickupAddress: "Adresse de prise en charge",
+    pickupPlaceholder: "Ex: Hôtel Akwa Palace, Rue de la Joie...",
+    dropoffAddress: "Adresse de dépose",
+    dropoffPlaceholder: "Ex: Aéroport de Douala...",
+    optional: "facultatif",
+    specialRequests: "Demandes spéciales",
+    specialRequestsPlaceholder: "Ex: J'ai 3 valises, besoin d'un siège enfant...",
+    priceBreakdown: "Détail du prix",
+    driverFee: "Tarif chauffeur",
+    platformFee: "Commission plateforme",
+    total: "Total à payer",
+    confirm: "Confirmer la réservation",
+    rate: "Tarif",
+    commissionNote: "Une commission de {percent}% est ajoutée pour couvrir le support et la sécurité.",
+    fillRequired: "Veuillez remplir tous les champs obligatoires.",
+    errorGeneric: "Une erreur est survenue. Veuillez réessayer.",
+  },
+
   // Skip to content
   a11y: {
     skipToContent: "Aller au contenu principal",

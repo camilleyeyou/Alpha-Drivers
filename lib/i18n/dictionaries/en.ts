@@ -562,6 +562,48 @@ const en: Dictionary = {
     reupload: "Re-upload",
   },
 
+  // Driver profile page
+  driverProfile: {
+    about: "About",
+    reviews: "Client reviews",
+    noReviews: "No reviews yet.",
+    quickInfo: "Quick info",
+    rate: "Hourly rate",
+    rating: "Rating",
+    completedTrips: "Completed trips",
+    memberSince: "Member since",
+  },
+
+  // Booking
+  booking: {
+    title: "Book a driver",
+    selectDriverFirst: "Please choose a driver from the list first.",
+    dateTime: "Date and time",
+    date: "Date",
+    startTime: "Start time",
+    duration: "Duration",
+    hours: "hour(s)",
+    location: "Pickup location",
+    pickupCity: "City",
+    selectCity: "Select a city",
+    pickupAddress: "Pickup address",
+    pickupPlaceholder: "e.g. Akwa Palace Hotel, Joy Street...",
+    dropoffAddress: "Drop-off address",
+    dropoffPlaceholder: "e.g. Douala Airport...",
+    optional: "optional",
+    specialRequests: "Special requests",
+    specialRequestsPlaceholder: "e.g. I have 3 suitcases, need a child seat...",
+    priceBreakdown: "Price breakdown",
+    driverFee: "Driver fee",
+    platformFee: "Platform fee",
+    total: "Total",
+    confirm: "Confirm booking",
+    rate: "Rate",
+    commissionNote: "A {percent}% commission is added to cover support and security.",
+    fillRequired: "Please fill in all required fields.",
+    errorGeneric: "An error occurred. Please try again.",
+  },
+
   // Skip to content
   a11y: {
     skipToContent: "Skip to main content",

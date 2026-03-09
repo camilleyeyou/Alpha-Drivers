@@ -22,6 +22,9 @@ export const metadata: Metadata = {
 
 export default async function TarifsPage() {
   const t = await getServerDictionary();
+  const commissionPercent = process.env.PLATFORM_COMMISSION_PERCENT || "15";
+  const registrationFee = parseInt(process.env.DRIVER_REGISTRATION_FEE || "10000");
+  const formattedFee = new Intl.NumberFormat("fr-FR").format(registrationFee) + " FCFA";
 
   const pricingInfo = [
     {
@@ -33,14 +36,14 @@ export default async function TarifsPage() {
     {
       title: t.tarifs.commission,
       description: t.tarifs.commissionDesc,
-      range: t.tarifs.commissionPercent,
+      range: `${commissionPercent}%`,
       detail: t.tarifs.commissionNote,
       popular: true,
     },
     {
       title: t.tarifs.registrationFee,
       description: t.tarifs.registrationFeeDesc,
-      range: t.tarifs.registrationFeeAmount,
+      range: formattedFee,
       detail: t.tarifs.registrationFeeNote,
     },
   ];
