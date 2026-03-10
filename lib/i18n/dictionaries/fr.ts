@@ -693,6 +693,18 @@ const fr = {
   a11y: {
     skipToContent: "Aller au contenu principal",
   },
+
+  // Chat
+  chat: {
+    title: "Messages",
+    placeholder: "Écrire un message...",
+    send: "Envoyer",
+    sending: "Envoi...",
+    noMessages: "Aucun message pour le moment. Commencez la conversation !",
+    disabled: "La messagerie est désactivée pour cette réservation.",
+    errorSend: "Impossible d'envoyer le message. Veuillez réessayer.",
+    errorLoad: "Impossible de charger les messages.",
+  },
 } as const;
 
 // Recursively convert literal string types to string

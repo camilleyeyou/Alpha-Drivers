@@ -695,6 +695,18 @@ const en: Dictionary = {
   a11y: {
     skipToContent: "Skip to main content",
   },
+
+  // Chat
+  chat: {
+    title: "Messages",
+    placeholder: "Write a message...",
+    send: "Send",
+    sending: "Sending...",
+    noMessages: "No messages yet. Start the conversation!",
+    disabled: "Messaging is disabled for this booking.",
+    errorSend: "Failed to send message. Please try again.",
+    errorLoad: "Failed to load messages.",
+  },
 } as const;
 
 export default en;

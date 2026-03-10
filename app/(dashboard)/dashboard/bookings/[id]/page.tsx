@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getInitials } from "@/lib/utils";
 import { BookingActions } from "@/components/booking/booking-actions";
+import { BookingChat } from "@/components/booking/booking-chat";
 
 export const metadata: Metadata = {
   title: "Détails de la réservation",
@@ -286,6 +287,13 @@ export default async function BookingDetailPage({
                 </CardContent>
               </Card>
             )}
+
+            {/* Chat */}
+            <BookingChat
+              bookingId={booking.id}
+              currentUserId={userId}
+              bookingStatus={booking.status}
+            />
           </div>
 
           {/* Sidebar */}

@@ -107,6 +107,15 @@ export const reviewDocumentSchema = z.object({
   rejectionReason: z.string().optional(),
 });
 
+// Message schema
+export const sendMessageSchema = z.object({
+  content: z
+    .string()
+    .min(1, "Le message ne peut pas être vide")
+    .max(1000, "Le message ne peut pas dépasser 1000 caractères")
+    .trim(),
+});
+
 // Type exports
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -117,3 +126,4 @@ export type ReviewInput = z.infer<typeof reviewSchema>;
 export type DocumentUploadInput = z.infer<typeof documentUploadSchema>;
 export type RejectDriverInput = z.infer<typeof rejectDriverSchema>;
 export type ReviewDocumentInput = z.infer<typeof reviewDocumentSchema>;
+export type SendMessageInput = z.infer<typeof sendMessageSchema>;
