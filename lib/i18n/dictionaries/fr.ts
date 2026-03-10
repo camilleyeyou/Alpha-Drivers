@@ -526,6 +526,22 @@ const fr = {
     next: "Suivant",
   },
 
+  // Admin users
+  adminUsers: {
+    title: "Gestion des utilisateurs",
+    totalUsers: "Total utilisateurs",
+    totalClients: "Clients",
+    totalDrivers: "Chauffeurs",
+    totalAdmins: "Administrateurs",
+    allUsers: "Tous les utilisateurs",
+    searchPlaceholder: "Rechercher par nom, téléphone ou email...",
+    usersFound: "utilisateurs trouvés",
+    noUsers: "Aucun utilisateur trouvé",
+    roleClient: "Client",
+    roleDriver: "Chauffeur",
+    inactive: "Inactif",
+  },
+
   // Driver documents upload
   driverDocuments: {
     title: "Mes documents",

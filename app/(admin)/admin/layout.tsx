@@ -52,8 +52,18 @@ export default async function AdminLayout({
                   size="sm"
                   className="text-gray-300 hover:text-white hover:bg-white/10 gap-2"
                 >
-                  <Users className="h-4 w-4" />
+                  <Car className="h-4 w-4" />
                   Chauffeurs
+                </Button>
+              </Link>
+              <Link href="/admin/users">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-300 hover:text-white hover:bg-white/10 gap-2"
+                >
+                  <Users className="h-4 w-4" />
+                  Utilisateurs
                 </Button>
               </Link>
             </nav>

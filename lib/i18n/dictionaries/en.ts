@@ -528,6 +528,22 @@ const en: Dictionary = {
     next: "Next",
   },
 
+  // Admin users
+  adminUsers: {
+    title: "User management",
+    totalUsers: "Total users",
+    totalClients: "Clients",
+    totalDrivers: "Drivers",
+    totalAdmins: "Administrators",
+    allUsers: "All users",
+    searchPlaceholder: "Search by name, phone or email...",
+    usersFound: "users found",
+    noUsers: "No users found",
+    roleClient: "Client",
+    roleDriver: "Driver",
+    inactive: "Inactive",
+  },
+
   // Driver documents upload
   driverDocuments: {
     title: "My documents",
