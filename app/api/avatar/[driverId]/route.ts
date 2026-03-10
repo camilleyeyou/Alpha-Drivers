@@ -7,6 +7,14 @@ export async function GET(
   { params }: { params: { driverId: string } }
 ) {
   try {
+    // Verify Supabase env vars are present
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json(
+        { error: "Supabase environment variables not configured" },
+        { status: 500 }
+      );
+    }
+
     const doc = await prisma.document.findUnique({
       where: {
         driverId_type: {
@@ -17,15 +25,21 @@ export async function GET(
     });
 
     if (!doc) {
-      return new NextResponse(null, { status: 404 });
+      return NextResponse.json(
+        { error: "No profile photo found for this driver" },
+        { status: 404 }
+      );
     }
 
     const signedUrl = await getSignedUrl(doc.fileUrl);
 
-    // Proxy the image bytes instead of redirecting (fixes Radix Avatar cross-origin issues)
+    // Proxy the image bytes instead of redirecting
     const imageResponse = await fetch(signedUrl);
     if (!imageResponse.ok) {
-      return new NextResponse(null, { status: 404 });
+      return NextResponse.json(
+        { error: "Failed to fetch image from storage" },
+        { status: 502 }
+      );
     }
 
     const imageBuffer = await imageResponse.arrayBuffer();
@@ -37,7 +51,11 @@ export async function GET(
         "Cache-Control": "public, max-age=1800, s-maxage=3600",
       },
     });
-  } catch {
-    return new NextResponse(null, { status: 404 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return NextResponse.json(
+      { error: `Avatar error: ${message}` },
+      { status: 500 }
+    );
   }
 }
