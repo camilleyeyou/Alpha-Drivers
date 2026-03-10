@@ -14,6 +14,7 @@ import {
   ChevronRight,
   User,
   LogOut,
+  MessageSquare,
 } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -363,6 +364,15 @@ export default async function DashboardPage({
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                   )}
+                  <Link href="/dashboard/conversations">
+                    <Button className="w-full justify-between" variant="outline">
+                      <span className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-primary-500" />
+                        {t.conversations.messages}
+                      </span>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
                   <Link href="/dashboard/documents">
                     <Button className="w-full justify-between" variant="outline">
                       <span className="flex items-center gap-2">
@@ -400,6 +410,18 @@ export default async function DashboardPage({
                       <span className="flex items-center gap-2">
                         <Car className="h-4 w-4 text-primary-500" />
                         {t.dashboard.findDriver}
+                      </span>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard/conversations">
+                    <Button
+                      className="w-full justify-between mt-2"
+                      variant="outline"
+                    >
+                      <span className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-primary-500" />
+                        {t.conversations.messages}
                       </span>
                       <ChevronRight className="h-4 w-4" />
                     </Button>

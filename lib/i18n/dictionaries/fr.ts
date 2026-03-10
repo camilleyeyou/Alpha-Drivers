@@ -721,6 +721,20 @@ const fr = {
     errorSend: "Impossible d'envoyer le message. Veuillez réessayer.",
     errorLoad: "Impossible de charger les messages.",
   },
+
+  // Conversations (direct messaging)
+  conversations: {
+    title: "Mes messages",
+    myConversations: "Conversations",
+    noConversations: "Aucune conversation",
+    noConversationsHint: "Contactez un chauffeur depuis son profil pour démarrer une conversation.",
+    contactDriver: "Contacter",
+    startChatting: "Envoyez un message pour démarrer la conversation.",
+    you: "Vous",
+    backToInbox: "Retour aux messages",
+    unknownUser: "Utilisateur",
+    messages: "Messages",
+  },
 } as const;
 
 // Recursively convert literal string types to string

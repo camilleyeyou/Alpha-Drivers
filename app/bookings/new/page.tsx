@@ -105,7 +105,7 @@ export default async function NewBookingPage({
               {/* Booking form */}
               <div className="lg:col-span-2">
                 <Card className="border-0 shadow-card-lift">
-                  <CardContent className="p-8">
+                  <CardContent className="p-5 sm:p-8">
                     <BookingForm
                       driverId={driver.id}
                       hourlyRate={driver.hourlyRate}

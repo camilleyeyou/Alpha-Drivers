@@ -723,6 +723,20 @@ const en: Dictionary = {
     errorSend: "Failed to send message. Please try again.",
     errorLoad: "Failed to load messages.",
   },
+
+  // Conversations (direct messaging)
+  conversations: {
+    title: "My messages",
+    myConversations: "Conversations",
+    noConversations: "No conversations",
+    noConversationsHint: "Contact a driver from their profile to start a conversation.",
+    contactDriver: "Contact",
+    startChatting: "Send a message to start the conversation.",
+    you: "You",
+    backToInbox: "Back to messages",
+    unknownUser: "User",
+    messages: "Messages",
+  },
 } as const;
 
 export default en;

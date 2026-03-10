@@ -116,7 +116,7 @@ export function BookingForm({
           {t.booking.dateTime}
         </h3>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>{t.booking.date}</Label>
             <Input
@@ -138,16 +138,30 @@ export function BookingForm({
 
         <div className="space-y-2">
           <Label>{t.booking.duration}</Label>
-          <div className="flex items-center gap-3">
-            <Clock className="h-5 w-5 text-gray-400" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Clock className="h-5 w-5 text-gray-400 shrink-0 hidden sm:block" />
+            <button
+              type="button"
+              onClick={() => setHours(Math.max(1, hours - 1))}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-gray-200 bg-gray-50 text-lg font-bold text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+            >
+              -
+            </button>
             <Input
               type="number"
               min={1}
               max={24}
               value={hours}
               onChange={(e) => setHours(Math.max(1, Math.min(24, parseInt(e.target.value) || 1)))}
-              className="w-24"
+              className="w-20 text-center"
             />
+            <button
+              type="button"
+              onClick={() => setHours(Math.min(24, hours + 1))}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-2 border-gray-200 bg-gray-50 text-lg font-bold text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+            >
+              +
+            </button>
             <span className="text-sm text-gray-500">{t.booking.hours}</span>
           </div>
         </div>

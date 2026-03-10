@@ -107,6 +107,7 @@ model User {
   paidTransactions Transaction[] @relation("PayerTransactions")
   receivedTransactions Transaction[] @relation("PayeeTransactions")
   passwordResetTokens PasswordResetToken[]
+  conversations    Conversation[] @relation("ClientConversations")
 
   @@map("users")
 }
@@ -163,9 +164,10 @@ model Driver {
   createdAt         DateTime     @default(now()) @map("created_at")
   updatedAt         DateTime     @updatedAt @map("updated_at")
 
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  documents Document[]
-  bookings  Booking[]
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents     Document[]
+  bookings      Booking[]
+  conversations Conversation[]
 
   @@index([status])
   @@map("drivers")
@@ -261,18 +263,38 @@ model Transaction {
 // MESSAGING & REVIEWS
 // ============================================
 
-model Message {
-  id        String    @id @default(cuid())
-  bookingId String    @map("booking_id")
-  senderId  String    @map("sender_id")
-  content   String    @db.Text
-  readAt    DateTime? @map("read_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+model Conversation {
+  id        String   @id @default(cuid())
+  clientId  String   @map("client_id")
+  driverId  String   @map("driver_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-  sender  User    @relation("SentMessages", fields: [senderId], references: [id])
+  client   User      @relation("ClientConversations", fields: [clientId], references: [id])
+  driver   Driver    @relation(fields: [driverId], references: [id])
+  messages Message[]
+
+  @@unique([clientId, driverId])
+  @@index([clientId])
+  @@index([driverId])
+  @@map("conversations")
+}
+
+model Message {
+  id              String    @id @default(cuid())
+  bookingId       String?   @map("booking_id")
+  conversationId  String?   @map("conversation_id")
+  senderId        String    @map("sender_id")
+  content         String    @db.Text
+  readAt          DateTime? @map("read_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  booking      Booking?      @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User          @relation("SentMessages", fields: [senderId], references: [id])
 
   @@index([bookingId])
+  @@index([conversationId])
   @@map("messages")
 }
 

@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ContactDriverButton } from "@/components/chat/contact-driver-button";
 import { CITIES, CITY_SLUGS, City } from "@/types";
 import { formatCurrency, getInitials } from "@/lib/utils";
 import prisma from "@/lib/db/prisma";
@@ -154,6 +155,7 @@ export default async function DriverProfilePage({
                     {t.common.book}
                   </Button>
                 </Link>
+                <ContactDriverButton driverId={driver.id} className="w-full mt-2 border-white/20 text-white hover:bg-white/10" />
               </div>
             </div>
           </div>
@@ -245,6 +247,7 @@ export default async function DriverProfilePage({
                         {t.common.book}
                       </Button>
                     </Link>
+                    <ContactDriverButton driverId={driver.id} className="w-full mt-2" />
                   </CardContent>
                 </Card>
               </div>
