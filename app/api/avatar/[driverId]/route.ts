@@ -22,8 +22,18 @@ export async function GET(
 
     const signedUrl = await getSignedUrl(doc.fileUrl);
 
-    return NextResponse.redirect(signedUrl, {
+    // Proxy the image bytes instead of redirecting (fixes Radix Avatar cross-origin issues)
+    const imageResponse = await fetch(signedUrl);
+    if (!imageResponse.ok) {
+      return new NextResponse(null, { status: 404 });
+    }
+
+    const imageBuffer = await imageResponse.arrayBuffer();
+    const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
+
+    return new NextResponse(imageBuffer, {
       headers: {
+        "Content-Type": contentType,
         "Cache-Control": "public, max-age=1800, s-maxage=3600",
       },
     });
