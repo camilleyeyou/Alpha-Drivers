@@ -36,8 +36,16 @@ export async function GET(
     // Proxy the image bytes instead of redirecting
     const imageResponse = await fetch(signedUrl);
     if (!imageResponse.ok) {
+      const body = await imageResponse.text().catch(() => "");
       return NextResponse.json(
-        { error: "Failed to fetch image from storage" },
+        {
+          error: "Failed to fetch image from storage",
+          status: imageResponse.status,
+          statusText: imageResponse.statusText,
+          body: body.substring(0, 500),
+          urlHost: new URL(signedUrl).hostname,
+          fileUrl: doc.fileUrl,
+        },
         { status: 502 }
       );
     }
