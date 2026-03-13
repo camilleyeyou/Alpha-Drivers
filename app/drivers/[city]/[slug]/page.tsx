@@ -98,7 +98,7 @@ export default async function DriverProfilePage({
               {t.common.back}
             </Link>
 
-            <div className="mt-8 flex flex-col items-center gap-8 sm:flex-row sm:items-start">
+            <div className="mt-6 sm:mt-8 flex flex-col items-center gap-6 sm:gap-8 sm:flex-row sm:items-start">
               <Avatar className="h-36 w-36 border-4 border-primary-500/30 shadow-glow-green">
                 <AvatarImage src={driver.user.avatarUrl || undefined} alt={driver.user.firstName || ""} />
                 <AvatarFallback className="bg-dark-700 text-4xl font-bold text-white">
@@ -170,7 +170,7 @@ export default async function DriverProfilePage({
                 {/* Bio */}
                 {driver.bio && (
                   <Card className="border-0 shadow-card-lift">
-                    <CardContent className="p-8">
+                    <CardContent className="p-5 sm:p-8">
                       <h2 className="font-display text-xl font-bold text-gray-900">
                         {t.driverProfile.about}
                       </h2>
@@ -183,7 +183,7 @@ export default async function DriverProfilePage({
 
                 {/* Reviews */}
                 <Card className="border-0 shadow-card-lift">
-                  <CardContent className="p-8">
+                  <CardContent className="p-5 sm:p-8">
                     <h2 className="font-display text-xl font-bold text-gray-900">
                       {t.driverProfile.reviews} ({driver.totalTrips})
                     </h2>

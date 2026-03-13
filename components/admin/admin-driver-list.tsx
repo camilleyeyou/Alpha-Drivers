@@ -95,12 +95,13 @@ export function AdminDriverList() {
   return (
     <div>
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6 overflow-x-auto -mx-1 px-1">
         {TABS.map((tab) => (
           <Button
             key={tab}
             variant={status === tab ? "default" : "outline"}
             size="sm"
+            className="text-xs sm:text-sm shrink-0"
             onClick={() => {
               setStatus(tab);
               setPage(1);
@@ -141,11 +142,11 @@ export function AdminDriverList() {
             <Link
               key={driver.id}
               href={`/admin/drivers/${driver.id}`}
-              className="flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm"
+              className="flex items-start sm:items-center justify-between gap-3 rounded-2xl border p-3 sm:p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm"
             >
-              <div>
-                <div className="flex items-center gap-3">
-                  <p className="font-display font-bold text-gray-900">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
+                  <p className="font-display font-bold text-gray-900 text-sm sm:text-base">
                     {driver.user.firstName} {driver.user.lastName}
                   </p>
                   <Badge
@@ -154,14 +155,14 @@ export function AdminDriverList() {
                     {statusLabels[driver.status] || driver.status}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1 text-xs sm:text-sm text-gray-600">
                   <span className="flex items-center gap-1">
-                    <Phone className="h-3.5 w-3.5" />
+                    <Phone className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
                     {driver.user.phone}
                   </span>
                   {driver.user.city && (
                     <span className="flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5" />
+                      <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 shrink-0" />
                       {driver.user.city}
                     </span>
                   )}
@@ -170,8 +171,8 @@ export function AdminDriverList() {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="hidden sm:inline text-sm text-gray-500">
                   {driver.documents.length}/5 docs
                 </span>
                 <ChevronRight className="h-5 w-5 text-gray-400" />

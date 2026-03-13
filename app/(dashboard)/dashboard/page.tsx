@@ -193,43 +193,43 @@ export default async function DashboardPage({
           </Card>
         )}
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Stats */}
             {isDriver && driver && (
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 <Card className="border-0">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50">
-                      <Calendar className="h-7 w-7 text-primary-600" />
+                  <CardContent className="p-3 sm:p-6 text-center">
+                    <div className="mx-auto flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-primary-50">
+                      <Calendar className="h-5 w-5 sm:h-7 sm:w-7 text-primary-600" />
                     </div>
-                    <p className="mt-3 font-display text-3xl font-black text-gray-900">
+                    <p className="mt-2 sm:mt-3 font-display text-xl sm:text-3xl font-black text-gray-900">
                       {driver.totalTrips}
                     </p>
-                    <p className="text-sm text-gray-600">{t.dashboard.statTrips}</p>
+                    <p className="text-xs sm:text-sm text-gray-600">{t.dashboard.statTrips}</p>
                   </CardContent>
                 </Card>
                 <Card className="border-0">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-50">
-                      <Star className="h-7 w-7 text-accent-600" />
+                  <CardContent className="p-3 sm:p-6 text-center">
+                    <div className="mx-auto flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-accent-50">
+                      <Star className="h-5 w-5 sm:h-7 sm:w-7 text-accent-600" />
                     </div>
-                    <p className="mt-3 font-display text-3xl font-black text-gray-900">
+                    <p className="mt-2 sm:mt-3 font-display text-xl sm:text-3xl font-black text-gray-900">
                       {Number(driver.avgRating).toFixed(1)}
                     </p>
-                    <p className="text-sm text-gray-600">{t.dashboard.statRating}</p>
+                    <p className="text-xs sm:text-sm text-gray-600">{t.dashboard.statRating}</p>
                   </CardContent>
                 </Card>
                 <Card className="border-0">
-                  <CardContent className="p-6 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50">
-                      <CreditCard className="h-7 w-7 text-green-600" />
+                  <CardContent className="p-3 sm:p-6 text-center">
+                    <div className="mx-auto flex h-10 w-10 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl bg-green-50">
+                      <CreditCard className="h-5 w-5 sm:h-7 sm:w-7 text-green-600" />
                     </div>
-                    <p className="mt-3 font-display text-3xl font-black text-gray-900">
+                    <p className="mt-2 sm:mt-3 font-display text-xl sm:text-3xl font-black text-gray-900">
                       {driver.totalEarnings.toLocaleString("fr-FR")}
                     </p>
-                    <p className="text-sm text-gray-600">{t.dashboard.statEarnings}</p>
+                    <p className="text-xs sm:text-sm text-gray-600">{t.dashboard.statEarnings}</p>
                   </CardContent>
                 </Card>
               </div>
@@ -276,17 +276,17 @@ export default async function DashboardPage({
                         <Link
                           key={booking.id}
                           href={`/dashboard/bookings/${booking.id}`}
-                          className="flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm cursor-pointer"
+                          className="flex items-start sm:items-center justify-between gap-3 rounded-2xl border p-3 sm:p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm cursor-pointer"
                         >
-                          <div>
-                            <p className="font-display font-bold text-gray-900">
+                          <div className="min-w-0">
+                            <p className="font-display font-bold text-gray-900 text-sm sm:text-base">
                               {isDriver
                                 ? `${booking.client.firstName} ${booking.client.lastName}`
                                 : `${booking.driver.user.firstName} ${booking.driver.user.lastName}`}
                             </p>
-                            <div className="flex items-center gap-2 mt-1 text-sm text-gray-600">
-                              <MapPin className="h-4 w-4 text-primary-500" />
-                              {booking.pickupLocation}
+                            <div className="flex items-center gap-2 mt-1 text-xs sm:text-sm text-gray-600">
+                              <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary-500 shrink-0" />
+                              <span className="truncate">{booking.pickupLocation}</span>
                             </div>
                             <p className="text-xs text-gray-500 mt-1">
                               {new Date(booking.startDate).toLocaleDateString(
@@ -295,9 +295,9 @@ export default async function DashboardPage({
                               - {booking.hoursBooked}h
                             </p>
                           </div>
-                          <div className="text-right">
-                            <p className="font-display font-bold text-gray-900">
-                              {booking.totalAmount.toLocaleString("fr-FR")} FCFA
+                          <div className="text-right shrink-0">
+                            <p className="font-display font-bold text-gray-900 text-sm sm:text-base">
+                              {booking.totalAmount.toLocaleString("fr-FR")} F
                             </p>
                             <Badge
                               className={`mt-1 text-xs ${statusColor}`}

@@ -132,13 +132,13 @@ export function BookingChat({
       </CardHeader>
       <CardContent className="p-0 flex flex-col">
         {isDisabled && (
-          <div className="mx-6 mb-3 rounded-xl bg-gray-50 border border-gray-200 p-3 text-sm text-gray-500 text-center">
+          <div className="mx-4 sm:mx-6 mb-3 rounded-xl bg-gray-50 border border-gray-200 p-3 text-sm text-gray-500 text-center">
             {t.chat.disabled}
           </div>
         )}
 
         {loadError && (
-          <div className="mx-6 mb-3 rounded-xl bg-red-50 border border-red-100 p-3 text-sm text-red-600">
+          <div className="mx-4 sm:mx-6 mb-3 rounded-xl bg-red-50 border border-red-100 p-3 text-sm text-red-600">
             {loadError}
           </div>
         )}
@@ -146,8 +146,8 @@ export function BookingChat({
         {/* Message list */}
         <div
           ref={scrollRef}
-          className="flex flex-col gap-3 overflow-y-auto px-6 py-3"
-          style={{ minHeight: "200px", maxHeight: "400px" }}
+          className="flex flex-col gap-3 overflow-y-auto px-4 sm:px-6 py-3"
+          style={{ minHeight: "180px", maxHeight: "350px" }}
         >
           {messages.length === 0 && !loadError ? (
             <div className="flex flex-1 items-center justify-center py-12 text-sm text-gray-400">
@@ -169,7 +169,7 @@ export function BookingChat({
                 )}
                 <div
                   className={cn(
-                    "max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+                    "max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 sm:px-4 py-2 sm:py-2.5 text-sm leading-relaxed",
                     isSent(msg)
                       ? "bg-primary-500 text-white rounded-br-sm"
                       : "bg-gray-100 text-gray-900 rounded-bl-sm"
@@ -197,7 +197,7 @@ export function BookingChat({
         </div>
 
         {sendError && (
-          <div className="mx-6 mb-2 rounded-xl bg-red-50 border border-red-100 p-2 text-xs text-red-600">
+          <div className="mx-4 sm:mx-6 mb-2 rounded-xl bg-red-50 border border-red-100 p-2 text-xs text-red-600">
             {sendError}
           </div>
         )}
@@ -206,7 +206,7 @@ export function BookingChat({
         {!isDisabled && (
           <form
             onSubmit={handleSend}
-            className="flex items-center gap-2 border-t border-gray-100 px-4 py-3"
+            className="flex items-center gap-2 border-t border-gray-100 px-3 sm:px-4 py-3"
           >
             <textarea
               className="flex-1 resize-none rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50"

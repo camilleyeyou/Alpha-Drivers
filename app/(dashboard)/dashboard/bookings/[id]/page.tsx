@@ -140,8 +140,8 @@ export default async function BookingDetailPage({
           {t.common.back}
         </Link>
 
-        <div className="flex flex-wrap items-center gap-4 mb-8">
-          <h1 className="font-display text-3xl font-extrabold text-gray-900">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-gray-900">
             {t.bookingDetail.title}
           </h1>
           <Badge className={`text-sm px-3 py-1 ${statusColor}`}>
@@ -149,12 +149,12 @@ export default async function BookingDetailPage({
           </Badge>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
           {/* Main content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-5 sm:space-y-6">
             {/* Other person */}
             <Card className="border-0 shadow-card-lift">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <p className="text-sm text-gray-500 mb-3">{otherLabel}</p>
                 <div className="flex items-center gap-4">
                   <Avatar className="h-14 w-14 border-2 border-primary-500/20">
@@ -182,7 +182,7 @@ export default async function BookingDetailPage({
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <p className="text-sm text-gray-500">{t.bookingDetail.dateLabel}</p>
                     <p className="font-medium">{formatDate(booking.startDate)}</p>

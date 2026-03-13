@@ -134,13 +134,13 @@ export default function DriverRegisterPage() {
         </Link>
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 py-12">
-        <div className="text-center mb-10">
-          <h1 className="font-display text-3xl font-extrabold text-white sm:text-4xl">{t.registerDriver.title}</h1>
-          <p className="mt-3 text-gray-400 text-lg">{t.registerDriver.subtitle}</p>
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="font-display text-2xl font-extrabold text-white sm:text-4xl">{t.registerDriver.title}</h1>
+          <p className="mt-3 text-gray-400 sm:text-lg">{t.registerDriver.subtitle}</p>
         </div>
 
-        <div className="rounded-2xl bg-white p-8 shadow-card-lift animate-fade-in-up">
+        <div className="rounded-2xl bg-white p-5 sm:p-8 shadow-card-lift animate-fade-in-up">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {error && (
               <div className="rounded-xl bg-red-50 border border-red-100 p-4 text-sm text-red-600 animate-fade-in" role="alert">
@@ -157,7 +157,7 @@ export default function DriverRegisterPage() {
                 {t.registerDriver.personalInfo}
               </h3>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">{t.registerDriver.firstName}</Label>
                   <Input
@@ -238,7 +238,7 @@ export default function DriverRegisterPage() {
                 {t.registerDriver.driverProfile}
               </h3>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="hourlyRate">{t.registerDriver.hourlyRate}</Label>
                   <div className="relative">
@@ -309,7 +309,7 @@ export default function DriverRegisterPage() {
                     {t.registerDriver.activeCities}
                   </span>
                 </Label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {Object.entries(CITIES).map(([key, city]) => (
                     <label
                       key={key}

@@ -74,29 +74,29 @@ export default async function AdminDashboardPage() {
   ];
 
   return (
-    <main className="container-app py-10">
-      <div className="mb-10">
-        <h1 className="font-display text-3xl font-extrabold text-gray-900">
+    <main className="container-app py-6 sm:py-10">
+      <div className="mb-6 sm:mb-10">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-gray-900">
           {t.admin.dashboard}
         </h1>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-10">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 mb-6 sm:mb-10">
         {stats.map((stat) => (
           <Card key={stat.label} className="border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-2xl ${stat.color}`}
+                  className={`flex h-10 w-10 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl ${stat.color}`}
                 >
-                  <stat.icon className="h-7 w-7" />
+                  <stat.icon className="h-5 w-5 sm:h-7 sm:w-7" />
                 </div>
                 <div>
-                  <p className="font-display text-3xl font-black text-gray-900">
+                  <p className="font-display text-xl sm:text-3xl font-black text-gray-900">
                     {stat.value}
                   </p>
-                  <p className="text-sm text-gray-600">{stat.label}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">{stat.label}</p>
                 </div>
               </div>
             </CardContent>
@@ -122,25 +122,25 @@ export default async function AdminDashboardPage() {
                 <Link
                   key={driver.id}
                   href={`/admin/drivers/${driver.id}`}
-                  className="flex items-center justify-between rounded-2xl border p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm"
+                  className="flex items-start sm:items-center justify-between gap-3 rounded-2xl border p-3 sm:p-4 transition-all duration-200 hover:bg-gray-50 hover:shadow-sm"
                 >
-                  <div>
-                    <p className="font-display font-bold text-gray-900">
+                  <div className="min-w-0">
+                    <p className="font-display font-bold text-gray-900 text-sm sm:text-base">
                       {driver.user.firstName} {driver.user.lastName}
                     </p>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1 text-xs sm:text-sm text-gray-600">
                       <span className="flex items-center gap-1">
-                        <Phone className="h-3.5 w-3.5" />
+                        <Phone className="h-3.5 w-3.5 shrink-0" />
                         {driver.user.phone}
                       </span>
                       {driver.user.city && (
                         <span className="flex items-center gap-1">
-                          <MapPin className="h-3.5 w-3.5" />
+                          <MapPin className="h-3.5 w-3.5 shrink-0" />
                           {driver.user.city}
                         </span>
                       )}
                     </div>
-                    <div className="flex gap-1.5 mt-2">
+                    <div className="flex flex-wrap gap-1.5 mt-2">
                       {driver.documents.map((doc) => (
                         <Badge
                           key={doc.type}
@@ -163,8 +163,8 @@ export default async function AdminDashboardPage() {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="hidden sm:inline text-sm text-gray-500">
                       {new Date(driver.createdAt).toLocaleDateString("fr-FR")}
                     </span>
                     <ChevronRight className="h-5 w-5 text-gray-400" />

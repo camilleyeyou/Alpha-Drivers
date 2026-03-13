@@ -115,9 +115,9 @@ export default async function DriversListPage({
         </section>
 
         <section className="container-app py-8">
-          <div className="flex flex-col gap-6 lg:flex-row">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row">
             <aside className="w-full lg:w-64 shrink-0">
-              <div className="rounded-2xl bg-white p-6 shadow-card-lift">
+              <div className="rounded-2xl bg-white p-4 sm:p-6 shadow-card-lift">
                 <h2 className="font-display font-bold text-gray-900 flex items-center gap-2">
                   <SlidersHorizontal className="h-5 w-5 text-primary-500" />
                   {t.driversList.filters}

@@ -25,44 +25,44 @@ export default async function AdminUsersPage() {
     ]);
 
   return (
-    <main className="container-app py-10">
-      <h1 className="font-display text-3xl font-extrabold text-gray-900 mb-8">
-        <Users className="inline h-8 w-8 text-primary-500 mr-3" />
+    <main className="container-app py-6 sm:py-10">
+      <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-gray-900 mb-6 sm:mb-8">
+        <Users className="inline h-6 w-6 sm:h-8 sm:w-8 text-primary-500 mr-2 sm:mr-3" />
         {t.adminUsers.title}
       </h1>
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-4 mb-10">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-4 mb-6 sm:mb-10">
         <Card className="border-0">
-          <CardContent className="p-6 text-center">
-            <p className="font-display text-3xl font-black text-gray-900">
+          <CardContent className="p-4 sm:p-6 text-center">
+            <p className="font-display text-xl sm:text-3xl font-black text-gray-900">
               {totalUsers}
             </p>
-            <p className="text-sm text-gray-600">{t.adminUsers.totalUsers}</p>
+            <p className="text-xs sm:text-sm text-gray-600">{t.adminUsers.totalUsers}</p>
           </CardContent>
         </Card>
         <Card className="border-0">
-          <CardContent className="p-6 text-center">
-            <p className="font-display text-3xl font-black text-blue-600">
+          <CardContent className="p-4 sm:p-6 text-center">
+            <p className="font-display text-xl sm:text-3xl font-black text-blue-600">
               {totalClients}
             </p>
-            <p className="text-sm text-gray-600">{t.adminUsers.totalClients}</p>
+            <p className="text-xs sm:text-sm text-gray-600">{t.adminUsers.totalClients}</p>
           </CardContent>
         </Card>
         <Card className="border-0">
-          <CardContent className="p-6 text-center">
-            <p className="font-display text-3xl font-black text-primary-600">
+          <CardContent className="p-4 sm:p-6 text-center">
+            <p className="font-display text-xl sm:text-3xl font-black text-primary-600">
               {totalDrivers}
             </p>
-            <p className="text-sm text-gray-600">{t.adminUsers.totalDrivers}</p>
+            <p className="text-xs sm:text-sm text-gray-600">{t.adminUsers.totalDrivers}</p>
           </CardContent>
         </Card>
         <Card className="border-0">
-          <CardContent className="p-6 text-center">
-            <p className="font-display text-3xl font-black text-purple-600">
+          <CardContent className="p-4 sm:p-6 text-center">
+            <p className="font-display text-xl sm:text-3xl font-black text-purple-600">
               {totalAdmins}
             </p>
-            <p className="text-sm text-gray-600">{t.adminUsers.totalAdmins}</p>
+            <p className="text-xs sm:text-sm text-gray-600">{t.adminUsers.totalAdmins}</p>
           </CardContent>
         </Card>
       </div>

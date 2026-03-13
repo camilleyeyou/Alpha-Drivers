@@ -114,20 +114,20 @@ export default async function AdminDriverDetailPage({
   const currentStatus = statusConfig[driver.status] || statusConfig.PENDING_PAYMENT;
 
   return (
-    <main className="container-app py-10">
+    <main className="container-app py-6 sm:py-10">
       {/* Back button */}
-      <Link href="/admin" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors">
+      <Link href="/admin" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 sm:mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />
         {t.admin.back}
       </Link>
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-10">
         <div>
-          <h1 className="font-display text-3xl font-extrabold text-gray-900">
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-gray-900">
             {driver.user.firstName} {driver.user.lastName}
           </h1>
-          <div className="flex items-center gap-3 mt-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
             <Badge className={currentStatus.color}>
               <currentStatus.icon className="h-3.5 w-3.5 mr-1" />
               {currentStatus.label}
@@ -148,18 +148,18 @@ export default async function AdminDriverDetailPage({
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           {/* Personal Info */}
           <Card className="border-0">
-            <CardHeader>
+            <CardHeader className="px-4 sm:px-6">
               <CardTitle className="font-display text-base">
                 {t.admin.personalInfo}
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2">
+            <CardContent className="px-4 sm:px-6">
+              <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
                 <div className="flex items-center gap-3">
                   <Phone className="h-5 w-5 text-primary-500" />
                   <div>
