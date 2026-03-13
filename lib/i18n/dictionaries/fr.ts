@@ -540,6 +540,11 @@ const fr = {
     roleClient: "Client",
     roleDriver: "Chauffeur",
     inactive: "Inactif",
+    makeAdmin: "Nommer admin",
+    removeAdmin: "Retirer admin",
+    confirmRoleChange: "Changer {name} en {role} ?",
+    confirm: "Confirmer",
+    cancel: "Annuler",
   },
 
   // Driver documents upload

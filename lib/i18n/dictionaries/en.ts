@@ -542,6 +542,11 @@ const en: Dictionary = {
     roleClient: "Client",
     roleDriver: "Driver",
     inactive: "Inactive",
+    makeAdmin: "Make admin",
+    removeAdmin: "Remove admin",
+    confirmRoleChange: "Change {name} to {role}?",
+    confirm: "Confirm",
+    cancel: "Cancel",
   },
 
   // Driver documents upload

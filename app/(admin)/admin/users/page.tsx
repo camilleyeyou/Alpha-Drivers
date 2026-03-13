@@ -2,6 +2,7 @@ import { Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminUserList } from "@/components/admin/admin-user-list";
 import prisma from "@/lib/db/prisma";
+import { auth } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n";
 
 export const metadata = {
@@ -9,6 +10,8 @@ export const metadata = {
 };
 
 export default async function AdminUsersPage() {
+  const session = await auth();
+  const isSuperAdmin = session?.user?.role === "SUPER_ADMIN";
   const t = await getServerDictionary();
 
   const [totalUsers, totalClients, totalDrivers, totalAdmins] =
@@ -72,7 +75,7 @@ export default async function AdminUsersPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <AdminUserList />
+          <AdminUserList isSuperAdmin={isSuperAdmin} />
         </CardContent>
       </Card>
     </main>

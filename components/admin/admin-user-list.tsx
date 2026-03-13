@@ -10,8 +10,11 @@ import {
   Mail,
   Calendar,
   Shield,
+  ShieldPlus,
+  ShieldMinus,
   Car,
   UserIcon,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +37,11 @@ type UserRecord = {
 
 const ROLE_TABS = ["all", "CLIENT", "DRIVER", "ADMIN"] as const;
 
-export function AdminUserList() {
+interface AdminUserListProps {
+  isSuperAdmin?: boolean;
+}
+
+export function AdminUserList({ isSuperAdmin = false }: AdminUserListProps) {
   const { t } = useTranslation();
   const [users, setUsers] = useState<UserRecord[]>([]);
   const [total, setTotal] = useState(0);
@@ -43,6 +50,12 @@ export function AdminUserList() {
   const [role, setRole] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [changingRole, setChangingRole] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{
+    userId: string;
+    newRole: string;
+    userName: string;
+  } | null>(null);
 
   const tabLabels: Record<string, string> = {
     all: t.admin.tabs.all,
@@ -92,6 +105,32 @@ export function AdminUserList() {
     ADMIN: "Admin",
     SUPER_ADMIN: "Super Admin",
   };
+
+  async function handleRoleChange(userId: string, newRole: string) {
+    setChangingRole(userId);
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/role`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (res.ok) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+        );
+      }
+    } catch {
+      // ignore
+    }
+    setChangingRole(null);
+    setConfirmAction(null);
+  }
+
+  const ROLE_OPTIONS = [
+    { value: "CLIENT", label: t.adminUsers.roleClient },
+    { value: "ADMIN", label: "Admin" },
+    { value: "SUPER_ADMIN", label: "Super Admin" },
+  ];
 
   const RoleIcon = ({ userRole }: { userRole: string }) => {
     if (userRole === "DRIVER") return <Car className="h-4 w-4 text-primary-500" />;
@@ -213,14 +252,89 @@ export function AdminUserList() {
                   </div>
                 </div>
               </div>
-              {user.driver && (
-                <a
-                  href={`/admin/drivers/${user.driver.id}`}
-                  className="text-primary-500 hover:text-primary-600"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </a>
-              )}
+              <div className="flex items-center gap-2 shrink-0 ml-4">
+                {/* Role management — SUPER_ADMIN only */}
+                {isSuperAdmin && user.role !== "DRIVER" && (
+                  <>
+                    {confirmAction?.userId === user.id ? (
+                      <div className="flex items-center gap-2 rounded-xl border border-purple-200 bg-purple-50 px-3 py-2">
+                        <span className="text-xs text-purple-700">
+                          {t.adminUsers.confirmRoleChange
+                            .replace("{name}", user.firstName || user.phone)
+                            .replace("{role}", roleLabels[confirmAction.newRole] || confirmAction.newRole)}
+                        </span>
+                        <Button
+                          size="sm"
+                          className="h-7 text-xs"
+                          disabled={changingRole === user.id}
+                          onClick={() => handleRoleChange(user.id, confirmAction.newRole)}
+                        >
+                          {changingRole === user.id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            t.adminUsers.confirm
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
+                          onClick={() => setConfirmAction(null)}
+                        >
+                          {t.adminUsers.cancel}
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        {(user.role === "CLIENT") && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 text-xs gap-1 border-purple-200 text-purple-700 hover:bg-purple-50"
+                            onClick={() =>
+                              setConfirmAction({
+                                userId: user.id,
+                                newRole: "ADMIN",
+                                userName: user.firstName || user.phone,
+                              })
+                            }
+                          >
+                            <ShieldPlus className="h-3.5 w-3.5" />
+                            {t.adminUsers.makeAdmin}
+                          </Button>
+                        )}
+                        {user.role === "ADMIN" && (
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 text-xs gap-1 border-red-200 text-red-600 hover:bg-red-50"
+                              onClick={() =>
+                                setConfirmAction({
+                                  userId: user.id,
+                                  newRole: "CLIENT",
+                                  userName: user.firstName || user.phone,
+                                })
+                              }
+                            >
+                              <ShieldMinus className="h-3.5 w-3.5" />
+                              {t.adminUsers.removeAdmin}
+                            </Button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+                {user.driver && (
+                  <a
+                    href={`/admin/drivers/${user.driver.id}`}
+                    className="text-primary-500 hover:text-primary-600"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </a>
+                )}
+              </div>
             </div>
           ))}
         </div>
